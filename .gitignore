@@ -1,0 +1,24 @@
+# common
+*.py[cod]
+*.log
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+bin
+var
+sdist
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+
+# Mr Developer
+.cache
+.idea
