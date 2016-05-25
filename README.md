@@ -1,6 +1,6 @@
 # About
 
-`django_context_logging` is a library for adding some request context to logs.
+`django_context_logging` is a library for adding request context to logs.
 Typical usage is for adding some request_id to all logs in order to make troubleshooting
 more comfortable.
 
@@ -17,7 +17,7 @@ First enable middleware for storing request context.
     DJANGO_CONTEXT_LOGGING_EXTRACTOR = lambda request: {'rid': request.GET.getlist('rid')}
 
 
-Here DJANGO_CONTEXT_LOGGING_EXTRACTOR is some callable which takes django.http.request.HttpRequest
+Here DJANGO_CONTEXT_LOGGING_EXTRACTOR is a callable which takes django.http.request.HttpRequest
 and returns dictionary with extracted context.
 
 **Note:** ExtractRequestContextMiddleware will fail with exception if no DJANGO_CONTEXT_LOGGING_EXTRACTOR specified.
