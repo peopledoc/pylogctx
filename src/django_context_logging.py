@@ -10,7 +10,7 @@ _log = logging.getLogger(__name__)
 
 class ExtractRequestContextMiddleware(object):
     def process_request(self, request):
-        extractor = settings.REQUEST_CONTEXT_EXTRACTOR
+        extractor = settings.DJANGO_CONTEXT_LOGGING_EXTRACTOR
         try:
             _thread_local.context = extractor(request)
         except Exception:

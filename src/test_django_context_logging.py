@@ -42,14 +42,15 @@ def test_extract_request_context_middleware_no_extractor(request):
 
 
 @patch('django_context_logging.settings',
-            REQUEST_CONTEXT_EXTRACTOR=_failing_extractor)
+       DJANGO_CONTEXT_LOGGING_EXTRACTOR=_failing_extractor)
 def test_extract_request_context_middleware_extraction_failed(request):
     with patch('django_context_logging._log') as m:
         ExtractRequestContextMiddleware().process_request(request)
         assert m.method_calls == [call.exception()]
 
 
-@patch('django_context_logging.settings', REQUEST_CONTEXT_EXTRACTOR=_extractor)
+@patch('django_context_logging.settings',
+       DJANGO_CONTEXT_LOGGING_EXTRACTOR=_extractor)
 def test_extract_request_context_middleware_context_extracted(request):
     ExtractRequestContextMiddleware().process_request(request)
     assert _thread_local.context == request
