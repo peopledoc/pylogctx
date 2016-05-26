@@ -25,7 +25,10 @@ def record():
 def context():
     _thread_local.context = {'rid': 42}
     yield None
-    del _thread_local.context
+    try:
+        del _thread_local.context
+    except AttributeError:
+        pass
 
 
 def _extractor(r):
@@ -54,6 +57,17 @@ def test_extract_request_context_middleware_extraction_failed(request):
 def test_extract_request_context_middleware_context_extracted(request):
     ExtractRequestContextMiddleware().process_request(request)
     assert _thread_local.context == request
+
+
+def test_extract_request_context_middleware_context_cleaned_on_response(context):
+    ExtractRequestContextMiddleware().process_response(None, None)
+    assert not hasattr(_thread_local, 'context')
+
+
+def test_extract_request_context_middleware_context_cleaned_on_exception(context):
+    ExtractRequestContextMiddleware().process_exception(None, None)
+    assert not hasattr(_thread_local, 'context')
+
 
 
 def test_add_context_formatter_no_context(record):

@@ -16,6 +16,20 @@ class ExtractRequestContextMiddleware(object):
         except Exception:
             _log.exception()
 
+    def process_response(self, request, response):
+        self._clean_context()
+        return response
+
+    def process_exception(self, request, exception):
+        self._clean_context()
+        return None
+
+    def _clean_context(self):
+        try:
+            del _thread_local.context
+        except AttributeError:
+            pass
+
 
 class AddContextFilter(logging.Filter):
     def __init__(self, name='', default=None):
