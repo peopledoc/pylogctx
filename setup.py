@@ -30,7 +30,7 @@ class PyTest(TestCommand):
 setup(
     name='django-context-logging',
     version=__version__,
-    description='Python Mongodb based Distributed Lock',
+    description='Library for adding request context to log records',
     long_description=README,
     classifiers=[
         'Intended Audience :: Developers',
