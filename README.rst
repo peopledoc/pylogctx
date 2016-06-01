@@ -1,3 +1,11 @@
+========================
+ Django Context Logging
+========================
+
+.. image:: https://travis-ci.org/lorehov/django_context_logging.svg
+    :target: https://travis-ci.org/lorehov/django_context_logging
+    :alt: Build Status
+
 =======
  About
 =======
