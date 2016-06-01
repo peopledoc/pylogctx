@@ -56,5 +56,5 @@ setup(
         'pytest>=2.9.0',
         'mock>=2.0.0'
     ],
-    install_requires=["django>=1.4.3"]
+    install_requires=open('requirements.txt').read().splitlines(),
 )
