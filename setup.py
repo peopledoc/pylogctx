@@ -7,7 +7,7 @@ from setuptools.command.test import test as TestCommand
 __version__ = '1.1.0'
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.md')).read()
+README = open(os.path.join(here, 'README.rst')).read()
 
 
 class PyTest(TestCommand):

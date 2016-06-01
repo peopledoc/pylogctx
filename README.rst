@@ -1,30 +1,40 @@
-# About
+=======
+ About
+=======
 
-`django_context_logging` is a library for adding request context to logs.
-Typical usage is for adding some request_id to all logs in order to make troubleshooting
-more comfortable.
+``django_context_logging`` is a library for adding request context to logs.
+Typical usage is for adding some request_id to all logs in order to make
+troubleshooting more comfortable.
 
 
-# Usage
+=======
+ Usage
+=======
 
 First enable middleware for storing request context.
+
+.. code-block::
 
     MIDDLEWARE_CLASSES = [
         'django_context_logging.ExtractRequestContextMiddleware',
         # rest middlewares
     ]
-    
+
     DJANGO_CONTEXT_LOGGING_EXTRACTOR = lambda request: {'rid': request.GET.getlist('rid')}
 
 
-Here DJANGO_CONTEXT_LOGGING_EXTRACTOR is a callable which takes django.http.request.HttpRequest
-and returns dictionary with extracted context.
+Here DJANGO_CONTEXT_LOGGING_EXTRACTOR is a callable which takes
+django.http.request.HttpRequest and returns dictionary with extracted context.
 
-**Note:** ExtractRequestContextMiddleware will fail with exception if no DJANGO_CONTEXT_LOGGING_EXTRACTOR specified.
+**Note:** ExtractRequestContextMiddleware will fail with exception if no
+ DJANGO_CONTEXT_LOGGING_EXTRACTOR specified.
 
 Now it is possible to configure logging in one of two possible ways.
 
-## Using filter
+Using filter
+============
+
+.. code-block::
 
     LOGGING = {
         'version': 1,
@@ -36,7 +46,7 @@ Now it is possible to configure logging in one of two possible ways.
         },
         'filters': {
             'context_filter': {
-                '()': 'django_context_logging.AddContextFilter', 
+                '()': 'django_context_logging.AddContextFilter',
                 'default': {'rid': None}
             }
         },
@@ -58,13 +68,17 @@ Now it is possible to configure logging in one of two possible ways.
 
 Note three things:
 
-  * `%(rid)` in format string is for logging rid (for request_id) from our context;
-  * `django_context_logging.AddContextFilter` - filter which converts keys from context dict to attributes of LogRecord;
-  *  `'default': {'rid': None}` - some of our log events could be without context for example logs emitted on worker start. All these logs will not be recorded due to the lack of 'rid' attribute (in our example) on LogRecord instance. To fix this we provide default value for 'rid'.  
+  * ``%(rid)`` in format string is for logging rid (for request_id) from our context;
+  * ``django_context_logging.AddContextFilter`` - filter which converts keys from context dict to attributes of LogRecord;
+  *  ``'default': {'rid': None}`` - some of our log events could be without context for example logs emitted on worker start. All these logs will not be recorded due to the lack of 'rid' attribute (in our example) on LogRecord instance. To fix this we provide default value for 'rid'.
 
-## Using formatter
+Using formatter
+===============
 
-If you do not want to bother with custom log format and default context values for a filter - you can use `django_context_logging.AddContextFormatter`.
+If you do not want to bother with custom log format and default context values
+for a filter - you can use ``django_context_logging.AddContextFormatter``.
+
+.. code-block::
 
     LOGGING = {
         'version': 1,
@@ -90,5 +104,6 @@ If you do not want to bother with custom log format and default context values f
         }
     }
 
-As you can see in this case we doesn't add any context related fields to a log format string.
-This is because `django_context_logging.AddContextFormatter` will append all context information to every log. 
+As you can see in this case we doesn't add any context related fields to a log
+format string.  This is because ``django_context_logging.AddContextFormatter``
+will append all context information to every log.
