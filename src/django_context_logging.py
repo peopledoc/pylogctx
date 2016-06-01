@@ -1,34 +1,98 @@
+import itertools
 import logging
 import threading
 
 from django.conf import settings
 
 
-_thread_local = threading.local()
 _log = logging.getLogger(__name__)
+
+
+class Context(threading.local):
+    @property
+    def data(self):
+        # Since we are local, the property is not initialize upon init on
+        # object (which is shared) but on first access *in* thread.
+        try:
+            self._stack
+        except AttributeError:
+            self._stack = [{}]
+        return self._stack[0]
+
+    def clear(self):
+        """
+        Drop all records
+        """
+        self.data.clear()
+
+    def push(self, **fields):
+        """
+        Push records in context.
+        """
+        self.data.update(fields)
+
+    def pop(self, *keys):
+        """
+        Pop records from context.
+
+        Inexistant records are ignored.
+        """
+        for k in keys:
+            try:
+                self.data.pop(k)
+            except KeyError:
+                pass
+
+    def get(self):
+        """
+        Return the context as a dict.
+        """
+        return dict(self.items())
+
+    def items(self):
+        # Ensure thread local data is ready
+        self.data
+        # Squash all dict in stack
+        return itertools.chain(*[d.items() for d in self._stack])
+
+    def __call__(self, *objects, **fields):
+        return ContextManager(self, *objects, **fields)
+
+
+class ContextManager(object):
+    def __init__(self, log_context, *objects, **fields):
+        self.log_context = log_context
+        self.objects = objects
+        self.fields = fields
+
+    def __enter__(self):
+        # Ensure thread local data is ready
+        self.log_context.data
+        self.log_context._stack.insert(0, {})
+        self.log_context.push(*self.objects, **self.fields)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.log_context._stack.pop(0)
+
+
+context = Context()
 
 
 class ExtractRequestContextMiddleware(object):
     def process_request(self, request):
         extractor = settings.DJANGO_CONTEXT_LOGGING_EXTRACTOR
         try:
-            _thread_local.context = extractor(request)
+            context.push(**extractor(request))
         except Exception:
             _log.exception()
 
     def process_response(self, request, response):
-        self._clean_context()
+        context.clear()
         return response
 
     def process_exception(self, request, exception):
-        self._clean_context()
+        context.clear()
         return None
-
-    def _clean_context(self):
-        try:
-            del _thread_local.context
-        except AttributeError:
-            pass
 
 
 class AddContextFilter(logging.Filter):
@@ -37,15 +101,12 @@ class AddContextFilter(logging.Filter):
         self.default = default or {}
 
     def filter(self, record):
-        context = getattr(_thread_local, 'context', self.default)
-        for k, v in context.items():
-            setattr(record, k, v)
+        record.__dict__.update(context.get() or self.default)
         return True
 
 
 class AddContextFormatter(logging.Formatter):
     def format(self, record):
-        context = getattr(_thread_local, 'context', {})
         msg = super(AddContextFormatter, self).format(record)
         context_str = u' '.join([
             u'{}:{}'.format(k, v) for k, v in context.items()

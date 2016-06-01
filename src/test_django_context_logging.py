@@ -1,5 +1,7 @@
 import copy
 from logging import LogRecord
+import sys
+import threading
 
 import pytest
 from django.core.exceptions import ImproperlyConfigured
@@ -7,13 +9,13 @@ from mock import patch, call
 
 from django_context_logging import (
     ExtractRequestContextMiddleware, AddContextFormatter, AddContextFilter,
-    _thread_local
+    context as log_context
 )
 
 
 @pytest.fixture()
 def request():
-    return {'rid'}
+    return {'rid': 42}
 
 
 @pytest.fixture()
@@ -23,10 +25,10 @@ def record():
 
 @pytest.yield_fixture
 def context():
-    _thread_local.context = {'rid': 42}
+    log_context.push(rid=42)
     yield None
     try:
-        del _thread_local.context
+        del log_context._stack
     except AttributeError:
         pass
 
@@ -54,19 +56,20 @@ def test_extract_request_context_middleware_extraction_failed(request):
 
 @patch('django_context_logging.settings',
        DJANGO_CONTEXT_LOGGING_EXTRACTOR=_extractor)
-def test_extract_request_context_middleware_context_extracted(request):
+def test_extract_request_context_middleware_context_extracted(request, context):  # noqa
     ExtractRequestContextMiddleware().process_request(request)
-    assert _thread_local.context == request
+    fields = log_context.get()
+    assert 'rid' in fields
 
 
 def test_extract_request_context_middleware_context_cleaned_on_response(context):  # noqa
     ExtractRequestContextMiddleware().process_response(None, None)
-    assert not hasattr(_thread_local, 'context')
+    assert not log_context.get()
 
 
 def test_extract_request_context_middleware_context_cleaned_on_exception(context):  # noqa
     ExtractRequestContextMiddleware().process_exception(None, None)
-    assert not hasattr(_thread_local, 'context')
+    assert not log_context.get()
 
 
 def test_add_context_formatter_no_context(record):
@@ -97,3 +100,68 @@ def test_add_context_filter_with_context(record, context):
     AddContextFilter().filter(record)
     assert record.__dict__.pop('rid') == 42
     assert original_record.__dict__ == record.__dict__
+
+
+def test_push_clear_pop(context):
+    log_context.push(myField='toto', myOtherField='titi')
+    fields = log_context.get()
+    assert 'myField' in fields
+    assert 'myOtherField' in fields
+
+    log_context.pop('myOtherField')
+    fields = log_context.get()
+    assert 'myField' in fields
+    assert 'myOtherField' not in fields
+
+    log_context.clear()
+    fields = log_context.get()
+    assert 'myField' not in fields
+
+
+def test_context_manager(context):
+    # Check two level stack in log context
+    with log_context(myField='toto'):
+        fields = log_context.get()
+        assert 'myField' in fields
+
+        with log_context(myOtherField='toto'):
+            fields = log_context.get()
+            assert 'myOtherField' in fields
+            assert 'myField' in fields
+
+        fields = log_context.get()
+        assert 'myField' in fields
+        assert ('myOtherField', fields)
+
+    fields = log_context.get()
+    assert ('myField', fields)
+
+
+def test_multi_thread(context):
+    # Create a simple child thread pushing in log context, but NOT clearing
+    # context.
+    class Child(threading.Thread):
+        def __init__(self, shm):
+            super(Child, self).__init__()
+            self.shm = shm
+
+        def run(self):
+            try:
+                log_context.push(childField='titi')
+                fields = log_context.get()
+                assert 'childField' in fields
+            except (AssertionError, Exception):
+                self.case.shm['thread_exc_info'] = sys.exc_info()
+
+    # Run it
+    shm = dict(thread_exc_info=None)
+    child = Child(shm)
+    child.start()
+    child.join()
+
+    # Ensure child success
+    assert shm['thread_exc_info'] is None
+
+    # Check caller context is safe :-)
+    fields = log_context.get()
+    assert 'childField'not in fields
