@@ -1,10 +1,10 @@
-__version__ = '1.1.0'
-
 import os
 import sys
 
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
+
+__version__ = '1.1.0'
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.md')).read()

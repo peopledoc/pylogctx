@@ -59,15 +59,14 @@ def test_extract_request_context_middleware_context_extracted(request):
     assert _thread_local.context == request
 
 
-def test_extract_request_context_middleware_context_cleaned_on_response(context):
+def test_extract_request_context_middleware_context_cleaned_on_response(context):  # noqa
     ExtractRequestContextMiddleware().process_response(None, None)
     assert not hasattr(_thread_local, 'context')
 
 
-def test_extract_request_context_middleware_context_cleaned_on_exception(context):
+def test_extract_request_context_middleware_context_cleaned_on_exception(context):  # noqa
     ExtractRequestContextMiddleware().process_exception(None, None)
     assert not hasattr(_thread_local, 'context')
-
 
 
 def test_add_context_formatter_no_context(record):
@@ -98,4 +97,3 @@ def test_add_context_filter_with_context(record, context):
     AddContextFilter().filter(record)
     assert record.__dict__.pop('rid') == 42
     assert original_record.__dict__ == record.__dict__
-
