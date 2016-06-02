@@ -1,6 +1,4 @@
-.. image:: https://travis-ci.org/novafloss/pylogctx.svg
-    :target: https://travis-ci.org/novafloss/pylogctx
-    :alt: Build Status
+| |PyPI| |CI|
 
 ########################
  Python Logging Context
@@ -146,3 +144,12 @@ Contributors
 
   * Lev Orekhov `@lorehov <https://github.com/lorehov>`_
   * Étienne BERSAC `@bersace <https://github.com/bersace>`_
+
+
+.. |CI| image:: https://travis-ci.org/novafloss/pylogctx.svg?style=shield
+   :target: https://travis-ci.org/novafloss/pylogctx
+   :alt: CI Status
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/pylogctx.svg
+   :target: https://pypi.python.org/pypi/pylogctx
+   :alt: Version on PyPI

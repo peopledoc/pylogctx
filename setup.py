@@ -30,7 +30,7 @@ class PyTest(TestCommand):
 setup(
     name='pylogctx',
     version=__version__,
-    description='Library for adding request context to log records',
+    description='Adding context to log records',
     long_description=README,
     classifiers=[
         'Intended Audience :: Developers',
