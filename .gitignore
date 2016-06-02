@@ -2,23 +2,15 @@
 *.py[cod]
 *.log
 
-# Packages
+# Packages, pip
 *.egg
+*.eggs
 *.egg-info
-dist
+.cache
 build
-eggs
-bin
-var
+dist
 sdist
-
-# Installer logs
-pip-log.txt
 
 # Unit test / coverage reports
 .coverage
 .tox
-
-# Mr Developer
-.cache
-.idea

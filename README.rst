@@ -1,14 +1,14 @@
-.. image:: https://travis-ci.org/lorehov/django_context_logging.svg
-    :target: https://travis-ci.org/lorehov/django_context_logging
+.. image:: https://travis-ci.org/novafloss/pylogctx.svg
+    :target: https://travis-ci.org/novafloss/pylogctx
     :alt: Build Status
 
 ########################
- Django Context Logging
+ Python Logging Context
 ########################
 
-``django_context_logging`` is a library for enriching logs records with context
-fields.  Typical usage is for adding some request_id to all logs in order to
-make troubleshooting more comfortable. This context is shared by all app using
+``pylogctx`` is a library for enriching logs records with context fields.
+Typical usage is for adding some request_id to all logs in order to make
+troubleshooting more comfortable. This context is shared by all app using
 ``logging``, transparently.
 
 
@@ -18,6 +18,7 @@ make troubleshooting more comfortable. This context is shared by all app using
 
 You have two option to send the context to the log system: inject context as
 extra fields in records or append context to the each message.
+
 
 Using filter
 ============
@@ -36,7 +37,7 @@ the extra fields in format string.
         },
         'filters': {
             'context_filter': {
-                '()': 'django_context_logging.AddContextFilter',
+                '()': 'pylogctx.AddContextFilter',
                 'default': {'rid': None},
             }
         },
@@ -56,7 +57,7 @@ Note three things:
 
 * ``%(rid)`` in format string is for logging rid (for request_id) from our
   context;
-* ``django_context_logging.AddContextFilter`` - filter which converts keys from
+* ``pylogctx.AddContextFilter`` - filter which converts keys from
   context dict to attributes of LogRecord;
 * ``'default': {'rid': None}`` - some of our log events could be without
   context for example logs emitted on worker start. All these logs will not be
@@ -68,7 +69,7 @@ Using formatter
 ===============
 
 If you do not want to bother with custom log format and default context values
-for a filter - you can use ``django_context_logging.AddContextFormatter``.
+for a filter - you can use ``pylogctx.AddContextFormatter``.
 
 .. code-block::
 
@@ -76,7 +77,7 @@ for a filter - you can use ``django_context_logging.AddContextFormatter``.
         'version': 1,
         'formatters': {
             'append': {
-                '()': 'django_context_logging.AddContextFormatter'
+                '()': 'pylogctx.AddContextFormatter'
                 'format': '%(levelname)s %(name)s %(message)s'
             },
         },
@@ -93,7 +94,7 @@ for a filter - you can use ``django_context_logging.AddContextFormatter``.
     }
 
 As you can see in this case we doesn't add any context related fields to a log
-format string.  This is because ``django_context_logging.AddContextFormatter``
+format string.  This is because ``pylogctx.AddContextFormatter``
 will append all context information to every log.
 
 
@@ -105,7 +106,7 @@ inject shared fields in log records. Here is a full example:
 
 .. code-block::
 
-   from django_context_logging.log import context as log_context
+   from pylogctx.log import context as log_context
 
 
    log_context.push(userId=user.pk)
@@ -126,21 +127,22 @@ the context after each requests.
 .. code-block::
 
     MIDDLEWARE_CLASSES = [
-        'django_context_logging.ExtractRequestContextMiddleware',
-        # rest middlewares
+        'pylogctx.django.ExtractRequestContextMiddleware',
+        # rest middlewares...
     ]
 
-    DJANGO_CONTEXT_LOGGING_EXTRACTOR = lambda request: {'rid': request.GET.getlist('rid')}
+    PYLOGCTX_REQUEST_EXTRACTOR = lambda request: {'rid': request.GET.getlist('rid')}
 
 
-Here DJANGO_CONTEXT_LOGGING_EXTRACTOR is a callable which takes
-django.http.request.HttpRequest and returns dictionary with extracted context.
+Here ``PYLOGCTX_REQUEST_EXTRACTOR`` is a callable which takes
+``django.http.request.HttpRequest`` and returns dictionary with extracted
+context.
 
-**Note:** ExtractRequestContextMiddleware will fail with exception if no
- DJANGO_CONTEXT_LOGGING_EXTRACTOR specified.
+**Note:** ``ExtractRequestContextMiddleware`` will fail with exception if no
+``PYLOGCTX_REQUEST_EXTRACTOR`` specified.
 
- Contributors
- ------------
+Contributors
+------------
 
   * Lev Orekhov `@lorehov <https://github.com/lorehov>`_
   * Étienne BERSAC `@bersace <https://github.com/bersace>`_
