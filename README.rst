@@ -134,6 +134,21 @@ context.
 ``PYLOGCTX_REQUEST_EXTRACTOR`` specified.
 
 
+Automatic feeding for celery task
+---------------------------------
+
+A task class is provided to inject clear log context after each task. Use it
+like this.
+
+.. code-block::
+
+    app = Celery(task_cls='pylogctx.celery.LoggingTask')
+
+    @app.task
+    def my_task():
+        logger.info("Logging from task!")
+
+
 Contributors
 ============
 

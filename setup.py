@@ -54,6 +54,6 @@ setup(
         'django>=1.4.3',
         'mock>=2.0.0',
         'pytest>=2.9.0',
-        'mock>=2.0.0'
+        'celery',
     ],
 )
