@@ -51,8 +51,9 @@ setup(
     include_package_data=True,
     zip_safe=False,
     tests_require=[
+        'django>=1.4.3',
+        'mock>=2.0.0',
         'pytest>=2.9.0',
         'mock>=2.0.0'
     ],
-    install_requires=["django>=1.4.3"]
 )
