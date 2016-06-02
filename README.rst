@@ -140,7 +140,7 @@ context.
 ``PYLOGCTX_REQUEST_EXTRACTOR`` specified.
 
 Contributors
-------------
+============
 
   * Lev Orekhov `@lorehov <https://github.com/lorehov>`_
   * Étienne BERSAC `@bersace <https://github.com/bersace>`_
