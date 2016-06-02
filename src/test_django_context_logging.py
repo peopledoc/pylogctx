@@ -25,7 +25,7 @@ def record():
 
 @pytest.yield_fixture
 def context():
-    log_context.push(rid=42)
+    log_context.update(rid=42)
     yield None
     try:
         del log_context._stack
@@ -58,18 +58,18 @@ def test_extract_request_context_middleware_extraction_failed(request):
        DJANGO_CONTEXT_LOGGING_EXTRACTOR=_extractor)
 def test_extract_request_context_middleware_context_extracted(request, context):  # noqa
     ExtractRequestContextMiddleware().process_request(request)
-    fields = log_context.get()
+    fields = log_context.as_dict()
     assert 'rid' in fields
 
 
 def test_extract_request_context_middleware_context_cleaned_on_response(context):  # noqa
     ExtractRequestContextMiddleware().process_response(None, None)
-    assert not log_context.get()
+    assert not log_context.as_dict()
 
 
 def test_extract_request_context_middleware_context_cleaned_on_exception(context):  # noqa
     ExtractRequestContextMiddleware().process_exception(None, None)
-    assert not log_context.get()
+    assert not log_context.as_dict()
 
 
 def test_add_context_formatter_no_context(record):
@@ -102,43 +102,43 @@ def test_add_context_filter_with_context(record, context):
     assert original_record.__dict__ == record.__dict__
 
 
-def test_push_clear_pop(context):
-    log_context.push(myField='toto', myOtherField='titi')
-    fields = log_context.get()
+def test_update_clear_remove(context):
+    log_context.update(myField='toto', myOtherField='titi')
+    fields = log_context.as_dict()
     assert 'myField' in fields
     assert 'myOtherField' in fields
 
-    log_context.pop('myOtherField')
-    fields = log_context.get()
+    log_context.remove('myOtherField')
+    fields = log_context.as_dict()
     assert 'myField' in fields
     assert 'myOtherField' not in fields
 
     log_context.clear()
-    fields = log_context.get()
+    fields = log_context.as_dict()
     assert 'myField' not in fields
 
 
 def test_context_manager(context):
     # Check two level stack in log context
     with log_context(myField='toto'):
-        fields = log_context.get()
+        fields = log_context.as_dict()
         assert 'myField' in fields
 
         with log_context(myOtherField='toto'):
-            fields = log_context.get()
+            fields = log_context.as_dict()
             assert 'myOtherField' in fields
             assert 'myField' in fields
 
-        fields = log_context.get()
+        fields = log_context.as_dict()
         assert 'myField' in fields
         assert ('myOtherField', fields)
 
-    fields = log_context.get()
+    fields = log_context.as_dict()
     assert ('myField', fields)
 
 
 def test_multi_thread(context):
-    # Create a simple child thread pushing in log context, but NOT clearing
+    # Create a simple child thread updating in log context, but NOT clearing
     # context.
     class Child(threading.Thread):
         def __init__(self, shm):
@@ -147,8 +147,8 @@ def test_multi_thread(context):
 
         def run(self):
             try:
-                log_context.push(childField='titi')
-                fields = log_context.get()
+                log_context.update(childField='titi')
+                fields = log_context.as_dict()
                 assert 'childField' in fields
             except (AssertionError, Exception):
                 self.case.shm['thread_exc_info'] = sys.exc_info()
@@ -163,5 +163,5 @@ def test_multi_thread(context):
     assert shm['thread_exc_info'] is None
 
     # Check caller context is safe :-)
-    fields = log_context.get()
+    fields = log_context.as_dict()
     assert 'childField'not in fields

@@ -25,25 +25,28 @@ class Context(threading.local):
         """
         self.data.clear()
 
-    def push(self, **fields):
+    def update(self, **fields):
         """
         Push records in context.
         """
         self.data.update(fields)
 
-    def pop(self, *keys):
+    def remove(self, *keys):
         """
-        Pop records from context.
+        Drop records from context.
 
         Inexistant records are ignored.
         """
+        return self.remove_many(keys)
+
+    def remove_many(self, keys):
         for k in keys:
             try:
                 self.data.pop(k)
             except KeyError:
                 pass
 
-    def get(self):
+    def as_dict(self):
         """
         Return the context as a dict.
         """
@@ -60,16 +63,15 @@ class Context(threading.local):
 
 
 class ContextManager(object):
-    def __init__(self, log_context, *objects, **fields):
+    def __init__(self, log_context, **fields):
         self.log_context = log_context
-        self.objects = objects
         self.fields = fields
 
     def __enter__(self):
         # Ensure thread local data is ready
         self.log_context.data
         self.log_context._stack.insert(0, {})
-        self.log_context.push(*self.objects, **self.fields)
+        self.log_context.update(**self.fields)
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.log_context._stack.pop(0)
@@ -82,7 +84,7 @@ class ExtractRequestContextMiddleware(object):
     def process_request(self, request):
         extractor = settings.DJANGO_CONTEXT_LOGGING_EXTRACTOR
         try:
-            context.push(**extractor(request))
+            context.update(**extractor(request))
         except Exception:
             _log.exception()
 
@@ -101,7 +103,7 @@ class AddContextFilter(logging.Filter):
         self.default = default or {}
 
     def filter(self, record):
-        record.__dict__.update(context.get() or self.default)
+        record.__dict__.update(context.as_dict() or self.default)
         return True
 
 
