@@ -2,8 +2,6 @@ import itertools
 import logging
 import threading
 
-from django.conf import settings
-
 
 _log = logging.getLogger(__name__)
 
@@ -78,23 +76,6 @@ class ContextManager(object):
 
 
 context = Context()
-
-
-class ExtractRequestContextMiddleware(object):
-    def process_request(self, request):
-        extractor = settings.DJANGO_CONTEXT_LOGGING_EXTRACTOR
-        try:
-            context.update(**extractor(request))
-        except Exception:
-            _log.exception()
-
-    def process_response(self, request, response):
-        context.clear()
-        return response
-
-    def process_exception(self, request, exception):
-        context.clear()
-        return None
 
 
 class AddContextFilter(logging.Filter):
