@@ -4,8 +4,8 @@
  Python Logging Context
 ########################
 
-``pylogctx`` is a library for enriching logs records with context fields.
-Typical usage is for adding some request_id to all logs in order to make
+``pylogctx`` is a library for enriching each logs records from a context.
+Typical usage is for adding some ``request_id`` to all logs in order to make
 troubleshooting more comfortable. This context is shared by all app using
 ``logging``, transparently.
 
@@ -14,15 +14,15 @@ troubleshooting more comfortable. This context is shared by all app using
  Usage
 =======
 
-You have two option to send the context to the log system: inject context as
+You have two options to inject context to the log output: inject context as
 extra fields in records or append context to the each message.
 
 
 Using filter
 ============
 
-This method allow to pass fields to JSON formatters, log servers, etc. or use
-the extra fields in format string.
+This method allow to pass fields to JSON formatters, SaaS log servers, etc. or
+to use extra fields in format string.
 
 .. code-block::
 
@@ -30,12 +30,15 @@ the extra fields in format string.
         'version': 1,
         'formatters': {
             'extra': {
+                # rid stands for request_id and comes from context
                 'format': '%(levelname)s %(rid)s %(name)s %(message)s',
             },
         },
         'filters': {
             'context_filter': {
+                # This filter inject context into each log records.
                 '()': 'pylogctx.AddContextFilter',
+                # Default values for string formatting
                 'default': {'rid': None},
             }
         },
@@ -51,23 +54,12 @@ the extra fields in format string.
         },
     }
 
-Note three things:
-
-* ``%(rid)`` in format string is for logging rid (for request_id) from our
-  context;
-* ``pylogctx.AddContextFilter`` - filter which converts keys from
-  context dict to attributes of LogRecord;
-* ``'default': {'rid': None}`` - some of our log events could be without
-  context for example logs emitted on worker start. All these logs will not be
-  recorded due to the lack of 'rid' attribute (in our example) on LogRecord
-  instance. To fix this we provide default value for 'rid'.
-
 
 Using formatter
 ===============
 
 If you do not want to bother with custom log format and default context values
-for a filter - you can use ``pylogctx.AddContextFormatter``.
+for a filter, you can use ``pylogctx.AddContextFormatter``.
 
 .. code-block::
 
@@ -99,21 +91,23 @@ will append all context information to every log.
 Feeding the context
 ===================
 
-The context class is just a thread local dict. It is used as local registry to
-inject shared fields in log records. Here is a full example:
+The context object is just a thread local instance. It is used as local
+registry to inject shared fields in log records. Here is a full example:
 
 .. code-block::
 
    from pylogctx.log import context as log_context
 
 
-   log_context.push(userId=user.pk)
+   log_context.update(userId=user.pk)
    # code, log, etc.
    for article in blog.articles:
        with log_context(articleId=article.pk):
            # code, log, ...
    # code, log, etc.
-   log_context.pop('userId')
+   log_context.remove('userId')
+   ...
+   log_context.clear()
 
 
 Automatic feeding with middleware
@@ -139,11 +133,12 @@ context.
 **Note:** ``ExtractRequestContextMiddleware`` will fail with exception if no
 ``PYLOGCTX_REQUEST_EXTRACTOR`` specified.
 
-Contributors
-------------
 
-  * Lev Orekhov `@lorehov <https://github.com/lorehov>`_
-  * Étienne BERSAC `@bersace <https://github.com/bersace>`_
+Contributors
+============
+
+* Lev Orekhov `@lorehov <https://github.com/lorehov>`_
+* Étienne BERSAC `@bersace <https://github.com/bersace>`_
 
 
 .. |CI| image:: https://travis-ci.org/novafloss/pylogctx.svg?style=shield
