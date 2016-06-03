@@ -41,11 +41,10 @@ def test_filter_no_context_no_default(record):
     assert original_record.__dict__ == record.__dict__
 
 
-def test_filter_no_context_with_default(record):
-    original_record = copy.deepcopy(record)
-    AddContextFilter(default={'rid': 4}).filter(record)
-    assert record.__dict__.pop('rid') == 4
-    assert original_record.__dict__ == record.__dict__
+def test_filter_no_context_with_default(record, context):
+    AddContextFilter(default={'default': 4}).filter(record)
+    assert record.default == 4
+    assert record.rid == 42
 
 
 def test_filter_with_context(record, context):

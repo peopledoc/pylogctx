@@ -84,7 +84,8 @@ class AddContextFilter(logging.Filter):
         self.default = default or {}
 
     def filter(self, record):
-        record.__dict__.update(context.as_dict() or self.default)
+        fields = dict(self.default, **context.as_dict())
+        record.__dict__.update(fields)
         return True
 
 
