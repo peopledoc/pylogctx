@@ -1,4 +1,5 @@
 from .core import (
+    AdapterNotFound,
     AddContextFilter,
     AddContextFormatter,
     LazyAccessor,
@@ -7,6 +8,7 @@ from .core import (
 )
 
 __all__ = [
+    'AdapterNotFound',
     'AddContextFilter',
     'AddContextFormatter',
     'LazyAccessor',

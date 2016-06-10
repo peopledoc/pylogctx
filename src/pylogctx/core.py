@@ -109,6 +109,10 @@ class AddContextFormatter(logging.Formatter):
 _adapter_mapping = {}
 
 
+class AdapterNotFound(Exception):
+    pass
+
+
 def log_adapter(class_):
     def decorator(callable_):
         _adapter_mapping[class_] = callable_
@@ -124,7 +128,7 @@ def adapt(object_):
         except KeyError:
             continue
     else:
-        raise Exception("Can't log object of type %r" % type(object_))
+        raise AdapterNotFound("Can't log object of type %r" % type(object_))
     return adapter(object_)
 
 

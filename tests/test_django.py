@@ -3,8 +3,11 @@ from django.core.exceptions import ImproperlyConfigured
 from mock import patch, call
 
 from pylogctx.django import (
-    ExtractRequestContextMiddleware, context as log_context
+    ExtractRequestContextMiddleware,
+    OuterMiddleware,
+    context as log_context
 )
+from pylogctx import log_adapter
 
 
 @pytest.fixture()
@@ -58,3 +61,20 @@ def test_middleware_context_cleaned_on_response(context):
 def test_middleware_context_cleaned_on_exception(context):
     ExtractRequestContextMiddleware().process_exception(None, None)
     assert not log_context.as_dict()
+
+
+@patch.dict('pylogctx.core._adapter_mapping')
+def test_middleware_adapter(request, context):
+    @log_adapter(request.__class__)
+    def adapter(request):
+        return {
+            'djangoRequestId': id(request),
+        }
+
+    OuterMiddleware().process_request(request)
+    fields = log_context.as_dict()
+    assert 'djangoRequestId' in fields
+
+
+def test_middleware_missing_adapter(request, context):
+    OuterMiddleware().process_request(request)
