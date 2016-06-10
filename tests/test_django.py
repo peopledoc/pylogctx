@@ -44,17 +44,17 @@ def test_middleware_extraction_failed(request):
 
 
 @patch('pylogctx.django.settings', PYLOGCTX_REQUEST_EXTRACTOR=_extractor)
-def test_middleware_context_extracted(request, context):  # noqa
+def test_middleware_context_extracted(request, context):
     ExtractRequestContextMiddleware().process_request(request)
     fields = log_context.as_dict()
     assert 'rid' in fields
 
 
-def test_middleware_context_cleaned_on_response(context):  # noqa
+def test_middleware_context_cleaned_on_response(context):
     ExtractRequestContextMiddleware().process_response(None, None)
     assert not log_context.as_dict()
 
 
-def test_middleware_context_cleaned_on_exception(context):  # noqa
+def test_middleware_context_cleaned_on_exception(context):
     ExtractRequestContextMiddleware().process_exception(None, None)
     assert not log_context.as_dict()
