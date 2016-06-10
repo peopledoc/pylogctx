@@ -1,4 +1,4 @@
-| |PyPI| |CI|
+| |GitHub| |PyPI| |CI|
 
 ########################
  Python Logging Context
@@ -209,6 +209,10 @@ Join us to make log rocking again!
 .. |CI| image:: https://travis-ci.org/novafloss/pylogctx.svg?style=shield
    :target: https://travis-ci.org/novafloss/pylogctx
    :alt: CI Status
+
+.. |GitHub| image:: https://img.shields.io/github/stars/novafloss/pylogctx.svg?label=GitHub%20stars
+   :target: https://github.com/novafloss/pylogctx
+   :alt: GitHub homepage
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/pylogctx.svg
    :target: https://pypi.python.org/pypi/pylogctx
