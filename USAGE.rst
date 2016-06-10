@@ -2,13 +2,13 @@
  Using *pylogctx*
 ##################
 
-There two steps to use pylogctx:
 
-1. `Hook pylogctx into your logging configuration <setup>`_
-2. `Feed the context in your app <feed>`_
+.. contents:: Table of contents
+   :backlinks: none
 
 
-.. _setup:
+----
+
 
 Setup logging
 =============
@@ -81,10 +81,8 @@ format string.  This is because ``pylogctx.AddContextFormatter``
 will append all context information to every log message.
 
 
-.. _feed:
-
-Feeding the context
-===================
+Feed the context
+================
 
 The context object is just a thread local instance. It is used as local
 registry to inject shared fields in log records. Here is a full example:
@@ -192,8 +190,7 @@ you can put in the context.
 Beware that evaluating the accessor does not trigger a SQL query or any IO !
 
 
-That's all
-==========
+**That's all !!**
 
 You're done! It's now up to you to provide meaning full log messages, fields
 and to setup your app to send records to the log system.
