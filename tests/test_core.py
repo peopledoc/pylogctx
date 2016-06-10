@@ -3,6 +3,7 @@ from logging import LogRecord
 import sys
 import threading
 
+from mock import patch
 import pytest
 
 from pylogctx import (
@@ -18,7 +19,7 @@ def record():
 @pytest.yield_fixture
 def context():
     log_context.update(rid=42)
-    yield None
+    yield log_context
     try:
         del log_context._stack
     except AttributeError:
@@ -117,3 +118,48 @@ def test_multi_thread(context):
     # Check caller context is safe :-)
     fields = log_context.as_dict()
     assert 'childField'not in fields
+
+
+@patch.dict('pylogctx.core._adapter_mapping')
+def test_adapter_mro(context):
+    from pylogctx import log_adapter
+
+    class Parent(object):
+        pass
+
+    class Child(Parent):
+        pass
+
+    @log_adapter(Parent)
+    def parent_log_maker(instance):
+        return dict(parent=id(instance))
+
+    context.update(Child())
+
+    data = context.as_dict()
+    assert 'parent' in data
+
+
+@patch.dict('pylogctx.core._adapter_mapping')
+def test_adapter_manager(context):
+    from pylogctx import log_adapter
+
+    class Parent(object):
+        pass
+
+    class Child(Parent):
+        pass
+
+    @log_adapter(Parent)
+    def parent_log_maker(instance):
+        return dict(parent=id(instance))
+
+    with context(Child()):
+        data = context.as_dict()
+        assert 'parent' in data
+
+
+@patch.dict('pylogctx.core._adapter_mapping')
+def test_adapter_missing(context):
+    with pytest.raises(Exception):
+        context.update(object())

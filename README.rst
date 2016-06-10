@@ -149,6 +149,37 @@ like this.
         logger.info("Logging from task!")
 
 
+Adapt object to log record fields
+---------------------------------
+
+It can be cumbersome and error-prone to repeat every where in the codebase the
+association *field name*, *object property*. *pylogctx* allow a simple way to
+register adapter to class.
+
+.. code-block::
+
+    import uuid
+
+    from pylogctx import log_adapter
+    from django.http.request import HttpRequest
+
+    @log_adapter(HttpRequest)
+    def adapt_django_requests(request):
+        return {
+            djangoRequestId: str(uuid.uuid4()),
+        }
+
+
+Triggering the adapt logic is as easy as pushing the objects right into the
+context.
+
+.. code-block::
+
+    from pylogctx import log_context
+
+    log_context.update(request)
+
+
 Contributors
 ============
 
