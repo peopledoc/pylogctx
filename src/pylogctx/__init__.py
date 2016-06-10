@@ -1,6 +1,7 @@
 from .core import (
     AddContextFilter,
     AddContextFormatter,
+    LazyAccessor,
     context,
     log_adapter,
 )
@@ -8,6 +9,7 @@ from .core import (
 __all__ = [
     'AddContextFilter',
     'AddContextFormatter',
+    'LazyAccessor',
     'context',
     'log_adapter',
 ]

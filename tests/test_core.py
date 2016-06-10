@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import copy
 from logging import LogRecord
 import sys
@@ -163,3 +165,27 @@ def test_adapter_manager(context):
 def test_adapter_missing(context):
     with pytest.raises(Exception):
         context.update(object())
+
+
+def test_lazy_accessor():
+    from pylogctx import LazyAccessor
+
+    class MyAttribute(object):
+        def __repr__(self):
+            return r'<MyObject>'
+
+        def __str__(self):
+            return 'MyObject'
+
+        def __unicode__(self):
+            return u'обѥѩкт'
+
+    class MyObject(object):
+        attribute = MyAttribute()
+
+    instance = MyObject()
+    value = LazyAccessor(instance, 'attribute')
+
+    assert 'MyObject' == str(value)
+    assert '<MyObject>' == repr(value)
+    assert u'обѥѩкт' == unicode(value)

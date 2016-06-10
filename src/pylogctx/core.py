@@ -126,3 +126,21 @@ def adapt(object_):
     else:
         raise Exception("Can't log object of type %r" % type(object_))
     return adapter(object_)
+
+
+class LazyAccessor(object):
+    def __init__(self, instance, attrname):
+        self.instance = instance
+        self.attrname = attrname
+
+    def get(self):
+        return getattr(self.instance, self.attrname)
+
+    def __unicode__(self):
+        return unicode(self.get())
+
+    def __str__(self):
+        return str(self.get())
+
+    def __repr__(self):
+        return repr(self.get())
