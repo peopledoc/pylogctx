@@ -105,11 +105,56 @@ registry to inject shared fields in log records. Here is a full example:
    log_context.clear()
 
 
-Automatic feeding with middleware
+Adapt object to log record fields
 ---------------------------------
 
-A middleware is provided to inject extra fields in context. It will also clear
-the context after each requests.
+It can be cumbersome and error-prone to repeat every where in the codebase the
+association *field name*, *object property*. *pylogctx* allow a simple way to
+register adapter to class.
+
+.. code-block:: python
+
+    import uuid
+
+    from pylogctx import log_adapter
+    from django.http.request import HttpRequest
+
+    @log_adapter(HttpRequest)
+    def adapt_django_requests(request):
+        return {
+            djangoRequestId: str(uuid.uuid4()),
+        }
+
+
+Triggering the adapt logic is as easy as pushing the objects right into the
+context.
+
+.. code-block:: python
+
+    from pylogctx import log_context
+
+    log_context.update(request)
+
+
+Request middlewares
+-------------------
+
+``pylogctx.django.OuterMiddleware`` is a django request middleware provided to
+ensure the context is torn down between each request. It also tries to push the
+request object itself. If you register a ``log_adapter`` for the
+``django.http.request.HttpRequest`` class (see above example), it will be
+called for each instance of the request.
+
+.. code-block:: python
+
+    MIDDLEWARE_CLASSES = [
+        'pylogctx.django.OuterMiddleware',
+        # rest middlewares...
+    ]
+
+
+Another middleware is provided to inject extra fields in context, without
+registering adapter.
 
 .. code-block::
 
@@ -129,8 +174,8 @@ context.
 ``PYLOGCTX_REQUEST_EXTRACTOR`` specified.
 
 
-Automatic feeding for celery task
----------------------------------
+Celery task middleware
+----------------------
 
 A task class is provided to inject clear log context after each task. Use it
 like this.
@@ -144,35 +189,18 @@ like this.
         logger.info("Logging from task!")
 
 
-Adapt object to log record fields
----------------------------------
+Just like request middleware, the task object is pushed to the context. You can
+then register a log adapter for ``app.Task``.
 
-It can be cumbersome and error-prone to repeat every where in the codebase the
-association *field name*, *object property*. *pylogctx* allow a simple way to
-register adapter to class.
 
-.. code-block::
+.. code-block:: python
 
-    import uuid
-
-    from pylogctx import log_adapter
-    from django.http.request import HttpRequest
-
-    @log_adapter(HttpRequest)
-    def adapt_django_requests(request):
+    @log_adapter(app.Task)
+    def task_adapter(task):
         return {
-            djangoRequestId: str(uuid.uuid4()),
+            'celeryTask': task.name,
+            'celeryTaskId': task.request.id,
         }
-
-
-Triggering the adapt logic is as easy as pushing the objects right into the
-context.
-
-.. code-block::
-
-    from pylogctx import log_context
-
-    log_context.update(request)
 
 
 Dynamic context fields
