@@ -1,4 +1,4 @@
-| |GitHub| |BSD| |PyPI| |CI|
+| |GitHub| |BSD| |CI| |PyPI|
 
 ########################
  Python Logging Context
