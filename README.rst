@@ -180,6 +180,23 @@ context.
     log_context.update(request)
 
 
+Updating context fields
+-----------------------
+
+Sometime, you have a field that act as a watcher. e.g. a status of a business
+object. This can pollute the code readability to update log_context after each
+update of the object. This is why pylogctx ship a simple ``LazyAccessor`` util
+you can put in the context.
+
+.. code-block::
+
+    from pylogctx import log_context, LazyAccessor
+
+    log_context.update(status=LazyAccessor(self, status))
+
+Beware that evaluating the accessor does not trigger a SQL query or any IO !
+
+
 Contributors
 ============
 
