@@ -1,4 +1,4 @@
-| |GitHub| |PyPI| |CI|
+| |GitHub| |BSD| |PyPI| |CI|
 
 ########################
  Python Logging Context
@@ -205,6 +205,10 @@ Join us to make log rocking again!
 * Lev Orekhov `@lorehov <https://github.com/lorehov>`_
 * Étienne BERSAC `@bersace <https://github.com/bersace>`_
 
+
+.. |BSD| image:: https://img.shields.io/pypi/l/pylogctx.svg?maxAge=2592000
+   :target: https://github.com/novafloss/pylogctx/blob/master/LICENSE
+   :alt: BSD Licensed
 
 .. |CI| image:: https://travis-ci.org/novafloss/pylogctx.svg?style=shield
    :target: https://travis-ci.org/novafloss/pylogctx
