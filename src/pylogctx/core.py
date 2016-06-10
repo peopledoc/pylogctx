@@ -23,11 +23,18 @@ class Context(threading.local):
         """
         self.data.clear()
 
-    def update(self, **fields):
+    def update(self, *objects, **fields):
         """
         Push records in context.
         """
         self.data.update(fields)
+
+        for object_ in objects:
+            if not object_:
+                # You can safely pass None, it will be ignored.
+                continue
+
+            self.data.update(adapt(object_))
 
     def remove(self, *keys):
         """
@@ -61,15 +68,16 @@ class Context(threading.local):
 
 
 class ContextManager(object):
-    def __init__(self, log_context, **fields):
+    def __init__(self, log_context, *objects, **fields):
         self.log_context = log_context
+        self.objects = objects
         self.fields = fields
 
     def __enter__(self):
         # Ensure thread local data is ready
         self.log_context.data
         self.log_context._stack.insert(0, {})
-        self.log_context.update(**self.fields)
+        self.log_context.update(*self.objects, **self.fields)
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.log_context._stack.pop(0)
@@ -96,3 +104,25 @@ class AddContextFormatter(logging.Formatter):
             u'{}:{}'.format(k, v) for k, v in context.items()
         ])
         return u'{msg} {context}'.format(msg=msg, context=context_str)
+
+
+_adapter_mapping = {}
+
+
+def log_adapter(class_):
+    def decorator(callable_):
+        _adapter_mapping[class_] = callable_
+        return callable_
+    return decorator
+
+
+def adapt(object_):
+    for class_ in type(object_).__mro__:
+        try:
+            adapter = _adapter_mapping[class_]
+            break
+        except KeyError:
+            continue
+    else:
+        raise Exception("Can't log object of type %r" % type(object_))
+    return adapter(object_)
