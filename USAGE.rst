@@ -2,13 +2,13 @@
  Using *pylogctx*
 ##################
 
-There two steps to use pylogctx:
 
-1. `Hook pylogctx into your logging configuration <setup>`_
-2. `Feed the context in your app <feed>`_
+.. contents:: Table of contents
+   :backlinks: none
 
 
-.. _setup:
+----
+
 
 Setup logging
 =============
@@ -23,7 +23,7 @@ Using filter
 This method allow to pass fields to JSON formatters, SaaS log servers, etc. or
 to use extra fields in format string.
 
-.. code-block::
+.. code-block:: python
 
     LOGGING = {
         'version': 1,
@@ -57,7 +57,7 @@ Using formatter
 If you do not want to bother with custom log format and default context values
 for a filter, you can use ``pylogctx.AddContextFormatter``.
 
-.. code-block::
+.. code-block:: python
 
     LOGGING = {
         'version': 1,
@@ -81,15 +81,13 @@ format string.  This is because ``pylogctx.AddContextFormatter``
 will append all context information to every log message.
 
 
-.. _feed:
-
-Feeding the context
-===================
+Feed the context
+================
 
 The context object is just a thread local instance. It is used as local
 registry to inject shared fields in log records. Here is a full example:
 
-.. code-block::
+.. code-block:: python
 
    from pylogctx.log import context as log_context
 
@@ -111,7 +109,7 @@ Automatic feeding with middleware
 A middleware is provided to inject extra fields in context. It will also clear
 the context after each requests.
 
-.. code-block::
+.. code-block:: python
 
     MIDDLEWARE_CLASSES = [
         'pylogctx.django.ExtractRequestContextMiddleware',
@@ -135,7 +133,7 @@ Automatic feeding for celery task
 A task class is provided to inject clear log context after each task. Use it
 like this.
 
-.. code-block::
+.. code-block:: python
 
     app = Celery(task_cls='pylogctx.celery.LoggingTask')
 
@@ -192,8 +190,7 @@ you can put in the context.
 Beware that evaluating the accessor does not trigger a SQL query or any IO !
 
 
-That's all
-==========
+**That's all !!**
 
 You're done! It's now up to you to provide meaning full log messages, fields
 and to setup your app to send records to the log system.
