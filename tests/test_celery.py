@@ -2,6 +2,8 @@ from celery import Celery
 from celery.app import current_task
 from celery.utils.log import get_task_logger
 
+from mock import patch
+
 
 def test_task():
     from pylogctx import context
@@ -19,7 +21,6 @@ def test_task():
     result.maybe_reraise()
     fields = result.result
     assert 'taskField' in fields
-    assert 'celeryTask' in fields
     assert not context.as_dict()
 
 
@@ -35,3 +36,27 @@ def test_failing():
     result = my_task.apply()
     assert isinstance(result.result, Exception)
     assert not context.as_dict()
+
+
+@patch.dict('pylogctx.core._adapter_mapping')
+def test_adapter():
+    from pylogctx import context, log_adapter
+
+    app = Celery(task_cls='pylogctx.celery.LoggingTask')
+
+    @app.task
+    def my_task():
+        return context.as_dict()
+
+    @log_adapter(app.Task)
+    def adapter(task):
+        return {
+            'celeryTaskId': task.request.id,
+            'celeryTask': task.name
+        }
+
+    result = my_task.apply()
+    result.maybe_reraise()
+    fields = result.result
+    assert 'celeryTask' in fields
+    assert 'celeryTaskId' in fields
