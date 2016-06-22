@@ -99,12 +99,12 @@ class AddContextFilter(logging.Filter):
 
 
 class PasswordFilter(logging.Filter):
-    _filtered = '[Filtered]'
+    _substitution = '[Filtered]'
 
     def filter(self, record):
         for k in record.__dict__:
             if k == 'password':
-                setattr(record, k, self._filtered)
+                setattr(record, k, self._substitution)
 
         if record.exc_info:
             _, _, tb = record.exc_info
@@ -121,7 +121,7 @@ class PasswordFilter(logging.Filter):
 
                     for k in iterator:
                         if k == 'password':
-                            setter(k, self._filtered)
+                            setter(k, self._substitution)
                 tb = tb.tb_next
 
         return True
