@@ -3,6 +3,7 @@ from .core import (
     AddContextFilter,
     AddContextFormatter,
     LazyAccessor,
+    PasswordFilter,
     context,
     log_adapter,
 )
@@ -12,6 +13,7 @@ __all__ = [
     'AddContextFilter',
     'AddContextFormatter',
     'LazyAccessor',
+    'PasswordFilter',
     'context',
     'log_adapter',
 ]
