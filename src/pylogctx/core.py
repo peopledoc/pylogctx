@@ -1,3 +1,4 @@
+import functools
 import itertools
 import logging
 import threading
@@ -94,6 +95,35 @@ class AddContextFilter(logging.Filter):
     def filter(self, record):
         fields = dict(self.default, **context.as_dict())
         record.__dict__.update(fields)
+        return True
+
+
+class PasswordFilter(logging.Filter):
+    _filtered = '[Filtered]'
+
+    def filter(self, record):
+        for k in record.__dict__:
+            if k == 'password':
+                setattr(record, k, self._filtered)
+
+        if record.exc_info:
+            _, _, tb = record.exc_info
+            while tb:
+                for v in tb.tb_frame.f_locals.values():
+                    if isinstance(v, dict):
+                        setter = v.__setitem__
+                        iterator = iter(v)
+                    elif hasattr(v, '__dict__'):
+                        setter = functools.partial(setattr, v)
+                        iterator = iter(v.__dict__)
+                    else:
+                        continue
+
+                    for k in iterator:
+                        if k == 'password':
+                            setter(k, self._filtered)
+                tb = tb.tb_next
+
         return True
 
 

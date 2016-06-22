@@ -189,3 +189,51 @@ def test_lazy_accessor():
     assert 'MyObject' == str(value)
     assert '<MyObject>' == repr(value)
     assert u'обѥѩкт' == unicode(value)
+
+
+def test_password_field(record):
+    from pylogctx import PasswordFilter
+    record.password = 'clear'
+    PasswordFilter().filter(record)
+    assert '[Filtered]' == record.password
+
+
+def test_password_traceback_dict():
+    import logging
+    from pylogctx import PasswordFilter
+
+    try:
+        request = dict(password='clear')
+        raise Exception('foo')
+    except Exception:
+        record = logging.makeLogRecord(dict(exc_info=sys.exc_info()))
+    PasswordFilter().filter(record)
+    tb = record.exc_info[2]
+    while tb:
+        request = tb.tb_frame.f_locals.get('request')
+        if request:
+            assert '[Filtered]' == request['password']
+        tb = tb.tb_next
+
+
+def test_password_traceback_object():
+    import logging
+    from pylogctx import PasswordFilter
+
+    class Request(object):
+        password = 'clear'
+
+    try:
+        request = Request()
+        raise Exception('foo')
+    except Exception:
+        record = logging.makeLogRecord(dict(exc_info=sys.exc_info()))
+
+    PasswordFilter().filter(record)
+
+    tb = record.exc_info[2]
+    while tb:
+        request = tb.tb_frame.f_locals.get('request')
+        if request:
+            assert '[Filtered]' == request.password
+        tb = tb.tb_next
