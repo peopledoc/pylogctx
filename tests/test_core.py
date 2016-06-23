@@ -9,7 +9,8 @@ from mock import patch
 import pytest
 
 from pylogctx import (
-    AddContextFormatter, AddContextFilter, context as log_context
+    AddContextFormatter, AddContextFilter, ExcInfoFilter,
+    context as log_context,
 )
 
 
@@ -189,3 +190,9 @@ def test_lazy_accessor():
     assert 'MyObject' == str(value)
     assert '<MyObject>' == repr(value)
     assert u'обѥѩкт' == unicode(value)
+
+
+def test_filter_exc_info(record):
+    record.exc_info = object()
+    ExcInfoFilter().filter(record)
+    assert not record.exc_info

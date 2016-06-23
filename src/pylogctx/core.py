@@ -97,6 +97,12 @@ class AddContextFilter(logging.Filter):
         return True
 
 
+class ExcInfoFilter(logging.Filter):
+    def filter(self, record):
+        record.exc_info = None
+        return True
+
+
 class AddContextFormatter(logging.Formatter):
     def format(self, record):
         msg = super(AddContextFormatter, self).format(record)

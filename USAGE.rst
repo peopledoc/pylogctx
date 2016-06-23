@@ -218,6 +218,34 @@ you can put in the context.
 Beware that evaluating the accessor does not trigger a SQL query or any IO !
 
 
+Filter sensitive data
+=====================
+
+When using SaaS log service, you don't want to send passwords, credit cards and
+other sensitive informations to the cloud. ``ExcInfoFilter`` trim ``exc_info``
+field from each record before sending them to the service.
+
+
+.. code-block:: python
+
+    LOGGING = {
+        # ...
+        'filters': {
+            'excinfo': {
+                '()': 'pylogctx.ExcInfoFilter',
+            },
+            # ...
+        },
+        'handlers': {
+            'cloud': {
+                'class': '...',
+                'filters': ['addcontext', 'excinfo'],
+            },
+        },
+        # ...
+    }
+
+
 **That's all !!**
 
 You're done! It's now up to you to provide meaning full log messages, fields
