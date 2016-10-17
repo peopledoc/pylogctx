@@ -55,5 +55,6 @@ setup(
         'mock>=2.0.0',
         'pytest>=2.9.0',
         'celery',
+        'six'
     ],
 )

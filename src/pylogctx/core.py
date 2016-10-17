@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import itertools
 import logging
 import threading
@@ -106,10 +108,10 @@ class ExcInfoFilter(logging.Filter):
 class AddContextFormatter(logging.Formatter):
     def format(self, record):
         msg = super(AddContextFormatter, self).format(record)
-        context_str = u' '.join([
-            u'{}:{}'.format(k, v) for k, v in context.items()
+        context_str = ' '.join([
+            '{}:{}'.format(k, v) for k, v in context.items()
         ])
-        return u'{msg} {context}'.format(msg=msg, context=context_str)
+        return '{msg} {context}'.format(msg=msg, context=context_str)
 
 
 _adapter_mapping = {}
