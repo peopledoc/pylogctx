@@ -1,6 +1,7 @@
 from celery import Celery
 from celery.app import current_task
 from celery.utils.log import get_task_logger
+from celery import VERSION
 
 from mock import patch
 
@@ -18,7 +19,10 @@ def test_task():
         return context.as_dict()
 
     result = my_task.apply()
-    result.maybe_reraise()
+    if VERSION.major < 4:
+        result.maybe_reraise()
+    else:
+        result.maybe_throw()
     fields = result.result
     assert 'taskField' in fields
     assert not context.as_dict()
@@ -56,7 +60,11 @@ def test_adapter():
         }
 
     result = my_task.apply()
-    result.maybe_reraise()
+    if VERSION.major < 4:
+        result.maybe_reraise()
+    else:
+        result.maybe_throw()
+
     fields = result.result
     assert 'celeryTask' in fields
     assert 'celeryTaskId' in fields
