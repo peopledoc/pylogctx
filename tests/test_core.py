@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import unicode_literals
 
 import copy
 from logging import LogRecord
@@ -7,6 +8,7 @@ import threading
 
 from mock import patch
 import pytest
+import six
 
 from pylogctx import (
     AddContextFormatter, AddContextFilter, ExcInfoFilter,
@@ -87,10 +89,10 @@ def test_context_manager(context):
 
         fields = log_context.as_dict()
         assert 'myField' in fields
-        assert ('myOtherField', fields)
+        assert 'myOtherField' not in fields
 
     fields = log_context.as_dict()
-    assert ('myField', fields)
+    assert 'myField' not in fields
 
 
 def test_multi_thread(context):
@@ -172,14 +174,16 @@ def test_lazy_accessor():
     from pylogctx import LazyAccessor
 
     class MyAttribute(object):
+        str_repr = 'MyObject'
+
         def __repr__(self):
-            return r'<MyObject>'
+            return '<MyObject>'
 
         def __str__(self):
-            return 'MyObject'
+            return self.str_repr
 
         def __unicode__(self):
-            return u'обѥѩкт'
+            return 'обѥѩкт'
 
     class MyObject(object):
         attribute = MyAttribute()
@@ -189,7 +193,11 @@ def test_lazy_accessor():
 
     assert 'MyObject' == str(value)
     assert '<MyObject>' == repr(value)
-    assert u'обѥѩкт' == unicode(value)
+    if six.PY2:
+        assert 'обѥѩкт' == unicode(value)
+    else:
+        MyObject.attribute.str_repr = 'обѥѩкт'
+        assert 'обѥѩкт' == str(value)
 
 
 def test_filter_exc_info(record):
