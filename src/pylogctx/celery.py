@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import logging
 
-from celery.app import current_task
+from celery import current_task
 from celery.app.task import Task
 
 from .core import context
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class LoggingTask(Task):
     def __call__(self, *args, **kwargs):
-        task = current_task()
+        task = current_task
 
         try:
             context.update(task)

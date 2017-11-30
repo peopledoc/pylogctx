@@ -2,11 +2,14 @@ import pytest
 from django.core.exceptions import ImproperlyConfigured
 from mock import patch, call
 
+
 from pylogctx.django import (
     ExtractRequestContextMiddleware,
     OuterMiddleware,
     context as log_context
 )
+
+
 from pylogctx import log_adapter
 
 
