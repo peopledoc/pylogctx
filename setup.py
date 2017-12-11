@@ -51,7 +51,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     tests_require=[
-        'django>=1.4.3',
+        'django<=2',
         'mock>=2.0.0',
         'pytest>=2.9.0',
         'celery',
