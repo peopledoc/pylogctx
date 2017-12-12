@@ -129,7 +129,7 @@ def log_adapter(class_):
 
 
 def adapt(object_):
-    for class_ in type(object_).__mro__:
+    for class_ in object_.__class__.__mro__:
         try:
             adapter = _adapter_mapping[class_]
             break

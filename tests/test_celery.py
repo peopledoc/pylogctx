@@ -1,20 +1,20 @@
-from celery import Celery
-from celery.app import current_task
+from celery import Celery, current_task
 from celery.utils.log import get_task_logger
 from celery import VERSION
-
 from mock import patch
+
+from pylogctx.celery import LoggingTask
 
 
 def test_task():
     from pylogctx import context
 
-    app = Celery(task_cls='pylogctx.celery.LoggingTask')
+    app = Celery(task_cls=LoggingTask)
 
     @app.task
     def my_task():
         context.update(taskField='RUNNED')
-        logger = get_task_logger(current_task().name)
+        logger = get_task_logger(current_task.name)
         logger.info("I log!")
         return context.as_dict()
 
@@ -31,7 +31,7 @@ def test_task():
 def test_failing():
     from pylogctx import context
 
-    app = Celery(task_cls='pylogctx.celery.LoggingTask')
+    app = Celery(task_cls=LoggingTask)
 
     @app.task
     def my_task():
@@ -48,16 +48,16 @@ def test_adapter():
 
     app = Celery(task_cls='pylogctx.celery.LoggingTask')
 
-    @app.task
-    def my_task():
-        return context.as_dict()
-
     @log_adapter(app.Task)
     def adapter(task):
         return {
             'celeryTaskId': task.request.id,
             'celeryTask': task.name
         }
+
+    @app.task
+    def my_task():
+        return context.as_dict()
 
     result = my_task.apply()
     if VERSION.major < 4:
