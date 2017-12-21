@@ -132,17 +132,23 @@ def test_adapter_mro(context):
     class Parent(object):
         pass
 
-    class Child(Parent):
-        pass
+    class Child1(Parent):
+        name = "child1"
+
+    class Child2(Parent):
+        name = "child2"
 
     @log_adapter(Parent)
     def parent_log_maker(instance):
-        return dict(parent=id(instance))
+        return {instance.name: id(instance)}
 
-    context.update(Child())
+    child1 = Child1()
+    child2 = Child2()
+    context.update(child1, child2)
 
     data = context.as_dict()
-    assert 'parent' in data
+    assert child1.name in data
+    assert child2.name in data
 
 
 @patch.dict('pylogctx.core._adapter_mapping')
@@ -152,16 +158,50 @@ def test_adapter_manager(context):
     class Parent(object):
         pass
 
+    class Child1(Parent):
+        name = "child1"
+
+    class Child2(Parent):
+        name = "child2"
+
+    @log_adapter(Parent)
+    def parent_log_maker(instance):
+        return {instance.name: id(instance)}
+
+    child1 = Child1()
+    child2 = Child2()
+    with context(child1, child2):
+        data = context.as_dict()
+        assert child1.name in data
+        assert child2.name in data
+
+
+@patch.dict('pylogctx.core._adapter_mapping')
+def test_adapter_with_parameters(context):
+    from pylogctx import log_adapter
+
+    class Parent(object):
+        pass
+
     class Child(Parent):
         pass
 
     @log_adapter(Parent)
-    def parent_log_maker(instance):
-        return dict(parent=id(instance))
+    def parent_log_maker(instance, with_child=False):
+        fields = dict(parent=id(instance))
+        if with_child:
+            fields.update({"child": "titi"})
+        return fields
 
-    with context(Child()):
+    with context.cm_update_one(Child(), with_child=True):
         data = context.as_dict()
         assert 'parent' in data
+        assert 'child' in data
+
+    context.update_one(Child(), with_child=True)
+    data = context.as_dict()
+    assert 'parent' in data
+    assert 'child' in data
 
 
 @patch.dict('pylogctx.core._adapter_mapping')

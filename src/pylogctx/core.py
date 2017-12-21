@@ -28,6 +28,16 @@ class Context(threading.local):
     def update(self, *objects, **fields):
         """
         Push records in context.
+
+        `objects`: Instance of few/an object(s), usually a model object.
+
+        `fields`: Custom fields to push in context.
+
+        Usage:
+        .. code-block:: python
+
+            log_context.update(Request, Task)
+            log_context.update(Request, userId=2, articleId=4)
         """
         self.data.update(fields)
 
@@ -35,8 +45,23 @@ class Context(threading.local):
             if not object_:
                 # You can safely pass None, it will be ignored.
                 continue
+            self.update_one(object_)
 
-            self.data.update(adapt(object_))
+    def update_one(self, object_, **adapter_kw):
+        """
+        Push records from object in context with adapter kwargs
+
+        `object_`: Instance of an object, usually a model object.
+
+        `adapter_kw`: Pass extra kwargs to object.
+
+        Usage:
+        .. code-block:: python
+
+            log_context.update(Request)
+            log_context.update(Request, full_logs=True, display=True, ...)
+        """
+        self.data.update(adapt(object_, **adapter_kw))
 
     def remove(self, *keys):
         """
@@ -66,10 +91,13 @@ class Context(threading.local):
         return itertools.chain(*[d.items() for d in self._stack])
 
     def __call__(self, *objects, **fields):
-        return ContextManager(self, *objects, **fields)
+        return UpdateContextManager(self, *objects, **fields)
+
+    def cm_update_one(self, object_, **adapter_kw):
+        return UpdateOneContextManager(self, object_, **adapter_kw)
 
 
-class ContextManager(object):
+class UpdateContextManager(object):
     def __init__(self, log_context, *objects, **fields):
         self.log_context = log_context
         self.objects = objects
@@ -80,6 +108,22 @@ class ContextManager(object):
         self.log_context.data
         self.log_context._stack.insert(0, {})
         self.log_context.update(*self.objects, **self.fields)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.log_context._stack.pop(0)
+
+
+class UpdateOneContextManager(object):
+    def __init__(self, log_context, object_=None, **adapter_kw):
+        self.log_context = log_context
+        self.object_ = object_
+        self.adapter_kw = adapter_kw
+
+    def __enter__(self):
+        # Ensure thread local data is ready
+        self.log_context.data
+        self.log_context._stack.insert(0, {})
+        self.log_context.update_one(self.object_, **self.adapter_kw)
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.log_context._stack.pop(0)
@@ -128,7 +172,7 @@ def log_adapter(class_):
     return decorator
 
 
-def adapt(object_):
+def adapt(object_, **kwargs):
     for class_ in object_.__class__.__mro__:
         try:
             adapter = _adapter_mapping[class_]
@@ -137,7 +181,7 @@ def adapt(object_):
             continue
     else:
         raise AdapterNotFound("Can't log object of type %r" % type(object_))
-    return adapter(object_)
+    return adapter(object_, **kwargs)
 
 
 class LazyAccessor(object):

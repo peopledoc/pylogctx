@@ -120,7 +120,7 @@ register adapter to class.
     @log_adapter(HttpRequest)
     def adapt_django_requests(request):
         return {
-            djangoRequestId: str(uuid.uuid4()),
+            "djangoRequestId": str(uuid.uuid4()),
         }
 
 
@@ -131,8 +131,45 @@ context.
 
     from pylogctx import log_context
 
-    log_context.update(request)
+    log_context.update(Request)
 
+    # Or
+    with log_context.context(Request):
+      ...
+
+
+Parameterized adapter
+`````````````````````
+
+You can pass additional parameters to your adapter:
+
+.. code-block:: python
+
+    import uuid
+
+    from pylogctx import log_adapter
+    from django.http.request import HttpRequest
+
+    @log_adapter(HttpRequest)
+    def adapt_django_requests(request, full_logs=False):
+        fields = {
+            "djangoRequestId": str(uuid.uuid4()),
+        }
+        if full_logs:
+            fields.update({"djangoRequestStatus": 200})
+        return fields
+
+Call ``update_one`` to push parameters to your adapter:
+
+.. code-block:: python
+
+    from pylogctx import log_context
+
+    log_context.update_one(Request, full_logs=True)
+
+    # Or
+    with log_context.context.cm_update_one(Request, full_logs=True):
+      ...
 
 Request middlewares
 -------------------
