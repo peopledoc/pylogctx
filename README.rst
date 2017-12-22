@@ -94,8 +94,8 @@ rocking better!
    :target: https://github.com/novafloss/pylogctx/blob/master/LICENSE
    :alt: BSD Licensed
 
-.. |CI| image:: https://travis-ci.org/novafloss/pylogctx.svg?style=shield
-   :target: https://travis-ci.org/novafloss/pylogctx
+.. |CI| image:: https://travis-ci.org/peopledoc/pylogctx.svg?style=shield
+   :target: https://travis-ci.org/peopledoc/pylogctx
    :alt: CI Status
 
 .. |GitHub| image:: https://img.shields.io/github/stars/novafloss/pylogctx.svg?label=GitHub%20stars
