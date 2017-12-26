@@ -1,7 +1,14 @@
 Changelog
 ---------
 
-1.3 (unreleased)
+
+1.4 (unreleased)
+++++++++++++++++
+
+- Nothing changed yet.
+
+
+1.3 (2017-12-21)
 ++++++++++++++++
 
 - New method to update one object in adapter with custom parameters::
@@ -11,6 +18,7 @@ Changelog
         # Or
         with log_context.context.cm_update_one(Request, p1=True, p2=...):
            ...
+
 
 1.2 (2017-12-13)
 ++++++++++++++++
