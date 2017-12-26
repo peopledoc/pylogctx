@@ -89,7 +89,7 @@ registry to inject shared fields in log records. Here is a full example:
 
 .. code-block:: python
 
-   from pylogctx.log import context as log_context
+   from pylogctx import context as log_context
 
 
    log_context.update(userId=user.pk)
@@ -129,12 +129,12 @@ context.
 
 .. code-block:: python
 
-    from pylogctx import log_context
+    from pylogctx import context as log_context
 
     log_context.update(Request)
 
     # Or
-    with log_context.context(Request):
+    with log_context(Request):
       ...
 
 
@@ -163,12 +163,12 @@ Call ``update_one`` to push parameters to your adapter:
 
 .. code-block:: python
 
-    from pylogctx import log_context
+    from pylogctx import context as log_context
 
     log_context.update_one(Request, full_logs=True)
 
     # Or
-    with log_context.context.cm_update_one(Request, full_logs=True):
+    with log_context.cm_update_one(Request, full_logs=True):
       ...
 
 Request middlewares
@@ -248,7 +248,8 @@ you can put in the context.
 
 .. code-block::
 
-    from pylogctx import log_context, LazyAccessor
+    from pylogctx import context as log_context
+    from pylogctx import LazyAccessor
 
     log_context.update(status=LazyAccessor(self, status))
 

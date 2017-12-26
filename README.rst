@@ -13,7 +13,7 @@ using ``logging``, transparently.
 
     import logging.config
 
-    from pylogctx import log_context
+    from pylogctx import context as log_context
 
 
     logging.config.dictConfig({
