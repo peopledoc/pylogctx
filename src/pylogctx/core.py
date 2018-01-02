@@ -88,17 +88,14 @@ class Context(threading.local):
         self.data
 
         items = {}
-        # Squash all dict in stack and revert the list because
+        # Squash all dict in stack and reverse order because
         # the first values in stack are the last inserted values and we need
         # to override values with the last inserted
-        reverse_stack = list(self._stack)
-        reverse_stack.reverse()
-        for d in reverse_stack:
+        for d in reversed(self._stack):
             deepupdate(items, d)
         return items
 
     def items(self):
-        # Deprecated since v1.4 (not used anymore)
         return itertools.chain(*[self.as_dict().items()])
 
     def __call__(self, *objects, **fields):
@@ -164,7 +161,7 @@ class AddContextFormatter(logging.Formatter):
     def format(self, record):
         msg = super(AddContextFormatter, self).format(record)
         context_str = ' '.join([
-            '{}:{}'.format(k, v) for k, v in context.as_dict().items()
+            '{}:{}'.format(k, v) for k, v in context.items()
         ])
         return '{msg} {context}'.format(msg=msg, context=context_str)
 
