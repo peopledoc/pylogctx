@@ -4,6 +4,8 @@ import itertools
 import logging
 import threading
 
+from .helpers import deepupdate
+
 
 _log = logging.getLogger(__name__)
 
@@ -39,7 +41,7 @@ class Context(threading.local):
             log_context.update(Request, Task)
             log_context.update(Request, userId=2, articleId=4)
         """
-        self.data.update(fields)
+        deepupdate(self.data, fields)
 
         for object_ in objects:
             if not object_:
@@ -82,13 +84,19 @@ class Context(threading.local):
         """
         Return the context as a dict.
         """
-        return dict(self.items())
-
-    def items(self):
         # Ensure thread local data is ready
         self.data
-        # Squash all dict in stack
-        return itertools.chain(*[d.items() for d in self._stack])
+
+        items = {}
+        # Squash all dict in stack and reverse order because
+        # the first values in stack are the last inserted values and we need
+        # to override values with the last inserted
+        for d in reversed(self._stack):
+            deepupdate(items, d)
+        return items
+
+    def items(self):
+        return itertools.chain(*[self.as_dict().items()])
 
     def __call__(self, *objects, **fields):
         return UpdateContextManager(self, *objects, **fields)
