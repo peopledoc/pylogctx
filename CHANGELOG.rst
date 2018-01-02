@@ -5,7 +5,7 @@ Changelog
 1.4 (unreleased)
 ++++++++++++++++
 
-- Nothing changed yet.
+- Extended nested dictionary when key already exist during context update (#19)
 
 
 1.3 (2017-12-21)
