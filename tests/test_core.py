@@ -95,6 +95,52 @@ def test_context_manager(context):
     assert 'myField' not in fields
 
 
+def test_deep_update_dict(context):
+    log_context.remove('rid')
+
+    # Value to dict update override
+    log_context.update(myField={'toto': {'tata1': {'titi1': 'tutu'}}})
+    fields = log_context.as_dict()
+    assert fields == {'myField': {'toto': {'tata1': {'titi1': 'tutu'}}}}
+
+    # Update tata1 to add titi2
+    log_context.update(myField={'toto': {'tata1': {'titi2': 'tutu'}}})
+    fields = log_context.as_dict()
+    assert fields == {
+        'myField': {'toto': {'tata1': {'titi1': 'tutu', 'titi2': 'tutu'}}}}
+
+    # Override value `tata1/titi1`
+    log_context.update(myField={'toto': {'tata1': {'titi1': 'val'}}})
+    fields = log_context.as_dict()
+    assert fields == {
+        'myField': {'toto': {'tata1': {'titi1': 'val',
+                                       'titi2': 'tutu'}}}}
+
+
+def test_deep_update_dict_context_manger(context):
+    log_context.remove('rid')
+    with log_context(myField={'toto': {'tata1': {'titi1': 'tutu'}}}):
+        fields = log_context.as_dict()
+        assert fields == {'myField': {'toto': {'tata1': {'titi1': 'tutu'}}}}
+
+        # Update tata1 to add titi2
+        with log_context(myField={'toto': {'tata1': {'titi2': 'tutu'}}}):
+            fields = log_context.as_dict()
+            assert fields == {
+                'myField': {
+                    'toto': {'tata1': {'titi1': 'tutu', 'titi2': 'tutu'}}}}
+
+            # Override value `tata1/titi1`
+            with log_context(myField={'toto': {'tata1': {'titi1': 'val'}}}):
+                fields = log_context.as_dict()
+                assert fields == {
+                    'myField': {'toto': {'tata1': {'titi1': 'val',
+                                                   'titi2': 'tutu'}}}}
+
+    fields = log_context.as_dict()
+    assert 'myField' not in fields
+
+
 def test_multi_thread(context):
     # Create a simple child thread updating in log context, but NOT clearing
     # context.
