@@ -13,7 +13,7 @@ from pylogctx.helpers import deepupdate
     ({}, {2}, {}),
     ({'name': 'toto'}, {}, {'name': 'toto'}),
     ({}, {'name': 'toto'}, {'name': 'toto'}),
-    ({'name': 'toto'}, {'name': 'toto'}, {'name': 'toto'}),
+    ({'name': 'toto'}, {'name': 'tata'}, {'name': 'tata'}),
     ({'name': 'toto', 'hobbies': ['programming', 'chess']},
      {'hobbies': ['gaming']},
      {'name': 'toto', 'hobbies': ['programming', 'chess', 'gaming']}),
@@ -21,11 +21,10 @@ from pylogctx.helpers import deepupdate
      {'hobbies': {'gaming'}},
      {'name': 'toto', 'hobbies': {'programming', 'chess', 'gaming'}}),
     ({'name': {"toto": 1}, 'hobbies': ['programming', 'chess']},
-     {'name': {"toto2": 2}},
-     {'name': {"toto": 1, "toto2": 2},
+     {'name': {"tata": 2}},
+     {'name': {"toto": 1, "tata": 2},
       'hobbies': ['programming', 'chess']}),
 ])
 def test_deepupdate(target, src, result):
     deepupdate(target, src)
-    print (target)
     assert target == result

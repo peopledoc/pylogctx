@@ -16,20 +16,12 @@ def deepupdate(target, src):
     """
     if src and isinstance(src, dict):
         for k, v in src.items():
-            if isinstance(v, list):
-                if k not in target:
-                    target[k] = copy.deepcopy(v)
-                else:
+            if k in target and isinstance(v, (list, dict, set)):
+                if isinstance(v, list):
                     target[k].extend(v)
-            elif isinstance(v, dict):
-                if k not in target:
-                    target[k] = copy.deepcopy(v)
-                else:
+                elif isinstance(v, dict):
                     deepupdate(target[k], v)
-            elif isinstance(v, set):
-                if k not in target:
-                    target[k] = v.copy()
-                else:
-                    target[k].update(v.copy())
+                elif isinstance(v, set):
+                    target[k].update(v)
             else:
-                target[k] = copy.copy(v)
+                target[k] = copy.deepcopy(v)
