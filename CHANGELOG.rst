@@ -3,7 +3,7 @@
 ===========
 
 
-1.6 (unreleased)
+1.6 (2018(01-03)
 ++++++++++++++++
 
 - Fix update context from celery loggingTask
