@@ -2,7 +2,14 @@
  Changelog
 ===========
 
-1.5 (unreleased)
+
+1.6 (unreleased)
+++++++++++++++++
+
+- Fix update context from celery loggingTask
+
+
+1.5 (2018-01-03)
 ++++++++++++++++
 
 - Extended nested dictionary when key already exist during context update (#19)
