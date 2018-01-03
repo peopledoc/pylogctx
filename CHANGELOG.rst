@@ -6,6 +6,7 @@ Changelog
 ++++++++++++++++
 
 - Extended nested dictionary when key already exist during context update (#19)
+- Celery: Manage context logs when task call another task
 
 
 1.3 (2017-12-21)
