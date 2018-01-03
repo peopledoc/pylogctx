@@ -6,7 +6,7 @@
 1.6 (unreleased)
 ++++++++++++++++
 
-- Nothing changed yet.
+- Fix update context from celery loggingTask
 
 
 1.5 (2018-01-03)

@@ -46,6 +46,11 @@ def test_failing():
 def test_adapter():
     from pylogctx import context, log_adapter
 
+    # To fill save context
+    context.update(toto="tata")
+    fields = context.as_dict()
+    assert 'toto' in fields
+
     app = Celery(task_cls='pylogctx.celery.LoggingTask')
 
     @log_adapter(app.Task)
@@ -68,3 +73,9 @@ def test_adapter():
     fields = result.result
     assert 'celeryTask' in fields
     assert 'celeryTaskId' in fields
+
+    # Check context is the same before task was started
+    fields = context.as_dict()
+    assert 'toto' in fields
+
+    context.clear()  # Clear context

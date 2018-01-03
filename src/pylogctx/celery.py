@@ -41,4 +41,4 @@ class LoggingTask(Task):
             self.after_call()
             context.clear()
             if self.save_context:
-                context.push(**self.save_context)
+                context.update(**self.save_context)
