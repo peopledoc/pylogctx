@@ -2,14 +2,14 @@ Changelog
 ---------
 
 
-1.4 (unreleased)
+1.5 (unreleased)
 ++++++++++++++++
 
 - Extended nested dictionary when key already exist during context update (#19)
 - Celery: Manage context logs when task call another task
 
 
-1.3 (2017-12-21)
+1.4 (2017-12-21)
 ++++++++++++++++
 
 - New method to update one object in adapter with custom parameters::
@@ -21,7 +21,7 @@ Changelog
            ...
 
 
-1.2 (2017-12-13)
+1.3 (2017-12-13)
 ++++++++++++++++
 
 - Support Celery 4
