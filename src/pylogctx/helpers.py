@@ -1,4 +1,21 @@
+from __future__ import absolute_import
+
 import copy
+import logging
+
+from django.db import models
+
+logger = logging.getLogger(__name__)
+
+
+def prevent_django_model(value):
+
+    # Detect value is an instance from django model to warn before a deepcopy.
+    # Indeed when an django model object is "deepcopied",
+    # all these relationships are fetched.
+    if isinstance(value, models.Model):
+        logger.warning("[Pylogctx] Be careful an django model object: %s is "
+                       "deepcopying", value)
 
 
 def deepupdate(target, src):
@@ -24,4 +41,5 @@ def deepupdate(target, src):
                 elif isinstance(v, set):
                     target[k].update(v)
             else:
+                prevent_django_model(v)
                 target[k] = copy.deepcopy(v)
