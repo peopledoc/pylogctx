@@ -3,7 +3,13 @@
 ===========
 
 
-1.6 (2018(01-03)
+1.7 (unreleased)
+++++++++++++++++
+
+- Add warning log when deep copy django model object
+
+
+1.6 (2018-01-03)
 ++++++++++++++++
 
 - Fix update context from celery loggingTask
