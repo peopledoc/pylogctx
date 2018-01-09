@@ -1,6 +1,22 @@
 import copy
 
 
+def deepcopy_wrapper(value):
+    """Wrapper to check value before deepcopy
+    Indeed when an ORM object is "deepcopied",
+    all these relationships are fetched.
+
+    Override example:
+    >>> from django.db import models
+    >>> def deepcopy_wrapper(value):
+    >>>     if isinstance(value, models.Model):
+    >>>         logger.warning('[Pylogctx] Be careful an django model '
+    >>>                        'object: %s is "deepcopying"', value)
+    >>>     return copy.deepcopy(value)
+    """
+    return copy.deepcopy(value)
+
+
 def deepupdate(target, src):
     """Deep update target dict with src
     For each k,v in src: if k doesn't exist in target, it is deep copied from
@@ -24,4 +40,4 @@ def deepupdate(target, src):
                 elif isinstance(v, set):
                     target[k].update(v)
             else:
-                target[k] = copy.deepcopy(v)
+                target[k] = deepcopy_wrapper(v)
