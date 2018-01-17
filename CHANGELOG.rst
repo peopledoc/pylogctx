@@ -3,13 +3,13 @@
 ===========
 
 
-1.7 (unreleased)
+1.7 (2018-01-17)
 ++++++++++++++++
 
 - Fix deepupdate when target is not the same from the src
 
 
-1.6 (2018(01-03)
+1.6 (2018-01-03)
 ++++++++++++++++
 
 - Fix update context from celery loggingTask
