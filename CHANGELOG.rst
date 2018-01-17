@@ -3,6 +3,12 @@
 ===========
 
 
+1.7 (unreleased)
+++++++++++++++++
+
+- Fix deepupdate when target is not the same from the src
+
+
 1.6 (2018(01-03)
 ++++++++++++++++
 
