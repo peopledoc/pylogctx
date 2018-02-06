@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import logging
+import inspect
+import warnings
 
 from celery import current_task
 from celery import Task
@@ -13,11 +15,11 @@ logger = logging.getLogger(__name__)
 
 class LoggingTask(Task):
 
-    def before_call(self):
+    def before_call(self, *args, **kwargs):
         # Override if you need to add some vars or log something.
         pass
 
-    def after_call(self):
+    def after_call(self, *args, **kwargs):
         # Override if you need to add some vars or log something.
         pass
 
@@ -27,7 +29,14 @@ class LoggingTask(Task):
         self.save_context = context.as_dict()
         context.clear()
 
-        self.before_call()
+        args_repr = inspect.getargspec(self.before_call)
+        if args_repr.varargs is None:
+            # To keep breaking compat
+            warnings.warn('Method `before_call` without args is deprecated')
+            self.before_call()
+        else:
+            self.before_call(*args, **kwargs)
+
         task = current_task
 
         try:
@@ -38,7 +47,13 @@ class LoggingTask(Task):
         try:
             return super(LoggingTask, self).__call__(*args, **kwargs)
         finally:
-            self.after_call()
+            args_repr = inspect.getargspec(self.after_call)
+            if args_repr.varargs is None:
+                # To keep breaking compat
+                warnings.warn('Method `after_call` without args is deprecated')
+                self.after_call()
+            else:
+                self.after_call(*args, **kwargs)
             context.clear()
             if self.save_context:
                 context.update(**self.save_context)

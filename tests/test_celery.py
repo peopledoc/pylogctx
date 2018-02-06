@@ -28,6 +28,34 @@ def test_task():
     assert not context.as_dict()
 
 
+class OldLoggingTask(LoggingTask):
+
+    def before_call(self):
+        from pylogctx import context
+        context.update(taskField='RUNNED')
+
+
+def test_old_task():
+    from pylogctx import context
+
+    app = Celery(task_cls=OldLoggingTask)
+
+    @app.task
+    def my_task():
+        logger = get_task_logger(current_task.name)
+        logger.info("I log!")
+        return context.as_dict()
+
+    result = my_task.apply()
+    if VERSION.major < 4:
+        result.maybe_reraise()
+    else:
+        result.maybe_throw()
+    fields = result.result
+    assert 'taskField' in fields
+    assert not context.as_dict()
+
+
 def test_failing():
     from pylogctx import context
 
