@@ -63,7 +63,7 @@ class Context(threading.local):
             log_context.update(Request)
             log_context.update(Request, full_logs=True, display=True, ...)
         """
-        self.data.update(adapt(object_, **adapter_kw))
+        deepupdate(self.data, adapt(object_, **adapter_kw))
 
     def remove(self, *keys):
         """
