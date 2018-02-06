@@ -2,6 +2,12 @@
  Changelog
 ===========
 
+1.9 (unreleased)
+++++++++++++++++
+
+- Fix nested dict is None when recursive deepupdate
+
+
 1.8 (2018-02-06)
 ++++++++++++++++
 
