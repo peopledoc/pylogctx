@@ -2,7 +2,7 @@
  Changelog
 ===========
 
-1.8 (unreleased)
+1.8 (2018-02-06)
 ++++++++++++++++
 
 - Fix update_one to deepupdate

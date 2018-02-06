@@ -4,7 +4,7 @@ import sys
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
-__version__ = '1.7'
+__version__ = '1.8'
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
@@ -26,6 +26,7 @@ class PyTest(TestCommand):
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
+
 
 setup(
     name='pylogctx',
