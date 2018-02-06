@@ -6,6 +6,8 @@
 ++++++++++++++++
 
 - Fix update_one to deepupdate
+- Celery: Add arg and kwargs from method `before_call` and `after_call`
+  of `LoggingTask`
 
 
 1.7 (2018-01-17)
