@@ -16,16 +16,13 @@ def deepupdate(target, src):
     """
     if src and isinstance(src, dict):
         for k, v in src.items():
-            if k in target and isinstance(v, (list, dict, set)):
+            if k in target and target[k] is not None and isinstance(
+                    v, (list, dict, set)):
                 if isinstance(v, list):
-                    if target[k] is None:
-                        target[k] = []
                     target[k].extend(v)
                 elif isinstance(v, dict):
                     deepupdate(target[k], v)
                 elif isinstance(v, set):
-                    if target[k] is None:
-                        target[k] = set()
                     target[k].update(v)
             else:
                 target[k] = copy.deepcopy(v)
