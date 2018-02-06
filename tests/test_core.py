@@ -236,18 +236,24 @@ def test_adapter_with_parameters(context):
     def parent_log_maker(instance, with_child=False):
         fields = dict(parent=id(instance))
         if with_child:
-            fields.update({"child": "titi"})
+            fields.update({"child": {'baby2': 'tutu'}})
         return fields
+
+    log_context.update(child={'baby1': 'toto'})
 
     with context.cm_update_one(Child(), with_child=True):
         data = context.as_dict()
         assert 'parent' in data
         assert 'child' in data
+        assert 'baby1' in data['child']
+        assert 'baby2' in data['child']
 
     context.update_one(Child(), with_child=True)
     data = context.as_dict()
     assert 'parent' in data
     assert 'child' in data
+    assert 'baby1' in data['child']
+    assert 'baby2' in data['child']
 
 
 @patch.dict('pylogctx.core._adapter_mapping')
