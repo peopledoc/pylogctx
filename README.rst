@@ -83,11 +83,11 @@ There is a few helpers for Celery_ and Django_ projects. See USAGE_ for details!
 Contributors
 ============
 
-Do you want py3 support or other nice improvements ? Join us to make log
-rocking better!
+Join us to make log rocking better! Read HACKING_ and ask maintainers:
 
-* Lev Orekhov `@lorehov <https://github.com/lorehov>`_
+* David STEINBERGER `@dsteinberger <https://github.com/dsteinberger>`_
 * Étienne BERSAC `@bersace <https://github.com/bersace>`_
+* Lev Orekhov `@lorehov <https://github.com/lorehov>`_
 
 
 .. |BSD| image:: https://img.shields.io/pypi/l/pylogctx.svg?maxAge=2592000
@@ -108,4 +108,5 @@ rocking better!
 
 .. _Celery: http://www.celeryproject.org/
 .. _Django: https://www.djangoproject.com/
+.. _HACKING: https://github.com/novafloss/pylogctx/blob/master/HACKING.rst
 .. _USAGE: https://github.com/novafloss/pylogctx/blob/master/USAGE.rst
