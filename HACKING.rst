@@ -17,4 +17,4 @@ Here are steps to release:
 - Ensure the new version has an entry in CHANGELOG_.
 - Increment version in ``setup.py``.
 - Run ``make release`` to create commit and tag.
-- Now run ``make upload`` to create tarball and wheel. You
+- Now run ``make upload`` to create tarball and wheel.
