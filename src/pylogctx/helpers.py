@@ -25,4 +25,10 @@ def deepupdate(target, src):
                 elif isinstance(v, set):
                     target[k].update(v)
             else:
-                target[k] = copy.deepcopy(v)
+                from pylogctx.core import LazyAccessor
+                if isinstance(v, LazyAccessor):
+                    # To have a lazy representation from the instance we need
+                    # to keep the reference
+                    target[k] = v
+                else:
+                    target[k] = copy.deepcopy(v)

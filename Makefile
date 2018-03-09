@@ -20,3 +20,7 @@ upload:
 	: Ensure we build from tag
 	git describe --exact-match --tags
 	python3 setup.py sdist bdist_wheel --universal upload -r pypi
+
+
+test:
+	python setup.py test
