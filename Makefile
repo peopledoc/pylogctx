@@ -13,7 +13,7 @@ release:
 	git commit setup.py CHANGELOG.rst -m "Version $(VERSION)"
 	git tag $(VERSION)
 	git push $(UPSTREAM)
-	git push $(UPSTREAM)
+	git push --tags $(UPSTREAM)
 	@echo Now upload with make upload
 
 upload:
