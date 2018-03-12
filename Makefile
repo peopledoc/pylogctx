@@ -1,4 +1,4 @@
-VERSION=$(python setup.py --version)
+VERSION = $(shell python setup.py --version)
 UPSTREAM=git@github.com:peopledoc/pylogctx.git
 
 default:
