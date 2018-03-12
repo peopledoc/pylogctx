@@ -8,7 +8,7 @@ release:
 	: Ensure Changelog entry
 	grep -q $(VERSION) CHANGELOG.rst
 	: Pin date of release
-	sed -i '/$(VERSION)/s/unreleased/$(date +%Y-%m-%d)/' CHANGELOG.rst
+	sed -i '/$(VERSION)/s/unreleased/$(shell date +%Y-%m-%d)/' CHANGELOG.rst
 	: Commit, tag and push setup.py and Changelog
 	git commit setup.py CHANGELOG.rst -m "Version $(VERSION)"
 	git tag $(VERSION)
