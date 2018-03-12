@@ -292,6 +292,32 @@ def test_lazy_accessor():
         assert 'обѥѩкт' == str(value)
 
 
+def test_lazy_accessor_deepupdate(context):
+    log_context.remove('rid')
+
+    from pylogctx import LazyAccessor
+
+    class MyObject(object):
+        value = 'foo'
+
+        def __repr__(self):
+            return 'foo'
+
+    instance = MyObject()
+    lazy_instance = LazyAccessor(instance, 'value')
+
+    log_context.update(lazy_instance=lazy_instance)
+
+    fields = log_context.as_dict()
+    assert str(fields['lazy_instance']) == 'foo'
+
+    # Check value change for LazyAccessor
+    instance.value = 'bar'
+
+    fields = log_context.as_dict()
+    assert str(fields['lazy_instance']) == 'bar'
+
+
 def test_filter_exc_info(record):
     record.exc_info = object()
     ExcInfoFilter().filter(record)
