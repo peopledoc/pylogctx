@@ -2,7 +2,7 @@
  Changelog
 ===========
 
-1.10 (unreleased)
+1.10 (2018-03-12)
 +++++++++++++++++
 
 - Fix LazyAccessor object when deepupdate
