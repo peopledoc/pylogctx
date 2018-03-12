@@ -2,8 +2,8 @@
  Changelog
 ===========
 
-1.10 (unrelease)
-++++++++++++++++
+1.10 (unreleased)
++++++++++++++++++
 
 - Fix LazyAccessor object when deepupdate
 
