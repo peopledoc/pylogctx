@@ -14,6 +14,7 @@ def deepupdate(target, src):
     >>> print t
     {'name': 'toto', 'hobbies': ['programming', 'chess', 'gaming']}
     """
+    from pylogctx.core import LazyAccessor
     if src and isinstance(src, dict):
         for k, v in src.items():
             if k in target and target[k] is not None and isinstance(
@@ -25,10 +26,13 @@ def deepupdate(target, src):
                 elif isinstance(v, set):
                     target[k].update(v)
             else:
-                from pylogctx.core import LazyAccessor
                 if isinstance(v, LazyAccessor):
                     # To have a lazy representation from the instance we need
                     # to keep the reference
                     target[k] = v
+                elif isinstance(v, dict):
+                    # For manage nested LazyAccessor object
+                    target[k] = {}
+                    deepupdate(target[k], v)
                 else:
                     target[k] = copy.deepcopy(v)

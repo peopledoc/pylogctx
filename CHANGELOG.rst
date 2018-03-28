@@ -2,6 +2,13 @@
  Changelog
 ===========
 
+
+1.10 (unreleased)
++++++++++++++++++
+
+- Fix nested LazyAccessor object when deepupdate
+
+
 1.10 (2018-03-12)
 +++++++++++++++++
 
