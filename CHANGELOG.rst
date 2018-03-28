@@ -3,7 +3,7 @@
 ===========
 
 
-1.10 (unreleased)
+1.11 (unreleased)
 +++++++++++++++++
 
 - Fix nested LazyAccessor object when deepupdate
