@@ -112,6 +112,7 @@ def test_deep_update_dict(context):
     # Override value `tata1/titi1`
     log_context.update(myField={'toto': {'tata1': {'titi1': 'val'}}})
     fields = log_context.as_dict()
+
     assert fields == {
         'myField': {'toto': {'tata1': {'titi1': 'val',
                                        'titi2': 'tutu'}}}}
@@ -316,6 +317,33 @@ def test_lazy_accessor_deepupdate(context):
 
     fields = log_context.as_dict()
     assert str(fields['lazy_instance']) == 'bar'
+
+
+def test_lazy_accessor_deepupdate_nested(context):
+    log_context.remove('rid')
+
+    from pylogctx import LazyAccessor
+
+    class MyObject(object):
+        value = 'foo'
+
+        def __repr__(self):
+            return 'foo'
+
+    instance = MyObject()
+    lazy_instance = LazyAccessor(instance, 'value')
+
+    log_context.update(parent={"lazy_instance": lazy_instance,
+                               "foo": "bar"})
+
+    fields = log_context.as_dict()
+    assert str(fields['parent']['lazy_instance']) == 'foo'
+
+    # Check value change for LazyAccessor
+    instance.value = 'bar'
+
+    fields = log_context.as_dict()
+    assert str(fields['parent']['lazy_instance']) == 'bar'
 
 
 def test_filter_exc_info(record):
