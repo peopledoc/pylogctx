@@ -3,7 +3,7 @@
 ===========
 
 
-1.11 (unreleased)
+1.11 (2018-03-28)
 +++++++++++++++++
 
 - Fix nested LazyAccessor object when deepupdate
