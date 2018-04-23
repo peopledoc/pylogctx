@@ -1,16 +1,14 @@
-from __future__ import absolute_import
-
 import logging
-
 from django.conf import settings
-
 from pylogctx import context, AdapterNotFound
-
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    MiddlewareMixin = object
 
 logger = logging.getLogger(__name__)
 
-
-class OuterMiddleware(object):
+class OuterMiddleware(MiddlewareMixin):
     def process_request(self, request):
         context.clear()
         try:
