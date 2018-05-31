@@ -10,6 +10,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 class OuterMiddleware(MiddlewareMixin):
     def process_request(self, request):
         context.clear()
