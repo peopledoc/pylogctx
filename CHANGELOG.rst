@@ -2,6 +2,13 @@
  Changelog
 ===========
 
+1.12 (unreleased)
++++++++++++++++++
+
+- New style middlewares
+- Add support for Python 3.6 and Django 2
+- Drop support for Django < 1.11 and Python 3.4
+
 
 1.11 (2018-03-28)
 +++++++++++++++++
