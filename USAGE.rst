@@ -182,7 +182,7 @@ called for each instance of the request.
 
 .. code-block:: python
 
-    MIDDLEWARE_CLASSES = [
+    MIDDLEWARE = [
         'pylogctx.django.OuterMiddleware',
         # rest middlewares...
     ]
@@ -193,7 +193,7 @@ registering adapter.
 
 .. code-block:: python
 
-    MIDDLEWARE_CLASSES = [
+    MIDDLEWARE = [
         'pylogctx.django.ExtractRequestContextMiddleware',
         # rest middlewares...
     ]

@@ -88,6 +88,9 @@ Join us to make log rocking better! Read HACKING_ and ask maintainers:
 * David STEINBERGER `@dsteinberger <https://github.com/dsteinberger>`_
 * Étienne BERSAC `@bersace <https://github.com/bersace>`_
 * Lev Orekhov `@lorehov <https://github.com/lorehov>`_
+* Malte Baden Hansen `@Moulde <https://github.com/Moulde>`_
+* Vincent RIALLAND `@vrialland <https://github.com/vrialland>`_
+* Hugo SMETT `@hsmett <https://github.com/hsmett>`_
 
 
 .. |BSD| image:: https://img.shields.io/pypi/l/pylogctx.svg?maxAge=2592000

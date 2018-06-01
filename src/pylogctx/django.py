@@ -2,11 +2,8 @@ from __future__ import absolute_import
 
 import logging
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 from pylogctx import context, AdapterNotFound
-try:
-    from django.utils.deprecation import MiddlewareMixin
-except ImportError:
-    MiddlewareMixin = object
 
 logger = logging.getLogger(__name__)
 

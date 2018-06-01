@@ -1,5 +1,22 @@
 language: python
-python:
-- '3.5'
 install: pip install tox
-script: tox
+script: tox -e $TOX_ENV
+matrix:
+  include:
+    - python: 2.7
+      env: TOX_ENV=py27-django111
+
+    - python: 3.5
+      env: TOX_ENV=py35-django111
+
+    - python: 3.5
+      env: TOX_ENV=py35-django20
+
+    - python: 3.6
+      env: TOX_ENV=py36-django111
+
+    - python: 3.6
+      env: TOX_ENV=py36-django20
+
+    - python: 2.7
+      env: TOX_ENV=lint
