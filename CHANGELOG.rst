@@ -2,7 +2,7 @@
  Changelog
 ===========
 
-1.12 (unreleased)
+1.12 (2018-06-01)
 +++++++++++++++++
 
 - New style middlewares
