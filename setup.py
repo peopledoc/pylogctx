@@ -4,7 +4,7 @@ import sys
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
-version = '1.12.dev0'
+version = '1.13.dev0'
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
