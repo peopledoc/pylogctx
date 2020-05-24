@@ -100,33 +100,40 @@ class Context(threading.local):
         return itertools.chain(*[self.as_dict().items()])
 
     def prefix(self, prefix, separator="__", ):
-        """Add a prefix to the log context for the scope of a method call / class.
+        """Add a prefix to the log context for the scope of a method call /
+        class.
 
         NOTE: There's a high chance this is only Python 3+ compatible.
         """
         def _prefix(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
-                # Fairly loose checks on whether or not we can chuck these into log
-                # context. But, if they can be cast to a string, let's do it.
+                # Fairly loose checks on whether or not we can chuck these into
+                # log context. But, if they can be cast to a string, let's do
+                # it.
                 try:
                     str(prefix)
                 except Exception:
-                    raise ValueError("Cannot cast prefix to string: %r" % type(prefix))
+                    raise ValueError(
+                        "Cannot cast prefix to string: %r" % type(prefix)
+                    )
 
                 try:
                     str(separator)
                 except Exception:
-                    raise ValueError("Cannot cast separator to string: %r" % type(separator))
+                    raise ValueError(
+                        "Cannot cast separator to string: %r" % type(separator)
+                    )
 
                 old_update = self.update
+
                 def prefix_update(**updates):
                     old_update(
                         **{
                             "{}{}{}".format(prefix, separator, k): v
                             for k, v in updates.items()
                         }
-                )
+                    )
 
                 self.update = prefix_update
                 try:
