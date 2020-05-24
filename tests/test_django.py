@@ -13,8 +13,12 @@ from pylogctx.django import (
 from pylogctx import log_adapter
 
 
+@pytest.fixture
+def django_test_settings(monkeypatch):
+    monkeypatch.setenv("DJANGO_SETTINGS_MODULE", "settings")
+
 @pytest.fixture()
-def request():
+def mock_request():
     return {'rid': 42}
 
 
@@ -36,22 +40,22 @@ def _failing_extractor(r):
     raise KeyError
 
 
-def test_middleware_no_extractor(request):
+def test_middleware_no_extractor(mock_request):
     with pytest.raises(ImproperlyConfigured):
-        ExtractRequestContextMiddleware().process_request(request)
+        ExtractRequestContextMiddleware().process_request(mock_request)
 
 
 @patch('pylogctx.django.settings',
        PYLOGCTX_REQUEST_EXTRACTOR=_failing_extractor)
-def test_middleware_extraction_failed(settings, request):
+def test_middleware_extraction_failed(settings, mock_request, django_test_settings):
     with patch('pylogctx.django.logger') as m:
-        ExtractRequestContextMiddleware().process_request(request)
+        ExtractRequestContextMiddleware().process_request(mock_request)
         assert call.exception() in m.method_calls
 
 
 @patch('pylogctx.django.settings', PYLOGCTX_REQUEST_EXTRACTOR=_extractor)
-def test_middleware_context_extracted(settings, request, context):
-    ExtractRequestContextMiddleware().process_request(request)
+def test_middleware_context_extracted(settings, mock_request, context, django_test_settings):
+    ExtractRequestContextMiddleware().process_request(mock_request)
     fields = log_context.as_dict()
     assert 'rid' in fields
 
@@ -67,17 +71,17 @@ def test_middleware_context_cleaned_on_exception(context):
 
 
 @patch.dict('pylogctx.core._adapter_mapping')
-def test_middleware_adapter(request, context):
-    @log_adapter(request.__class__)
-    def adapter(request):
+def test_middleware_adapter(mock_request, context):
+    @log_adapter(mock_request.__class__)
+    def adapter(mock_request):
         return {
-            'djangoRequestId': id(request),
+            'djangoRequestId': id(mock_request),
         }
 
-    OuterMiddleware().process_request(request)
+    OuterMiddleware().process_request(mock_request)
     fields = log_context.as_dict()
     assert 'djangoRequestId' in fields
 
 
-def test_middleware_missing_adapter(request, context):
-    OuterMiddleware().process_request(request)
+def test_middleware_missing_adapter(mock_request, context):
+    OuterMiddleware().process_request(mock_request)
