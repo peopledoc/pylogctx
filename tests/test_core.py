@@ -350,3 +350,89 @@ def test_filter_exc_info(record):
     record.exc_info = object()
     ExcInfoFilter().filter(record)
     assert not record.exc_info
+
+def test_update_with_prefix_happy_path(context):
+    @log_context.prefix("test")
+    def _dummy():
+        log_context.update(foo="bar", baz="qux", fourtytwo=42)
+
+    _dummy()
+    log_context.update(noprefix="please")
+
+    assert log_context.as_dict() == {
+        "rid": 42,
+        "test__foo": "bar",
+        "test__baz": "qux",
+        "test__fourtytwo": 42,
+        "noprefix": "please"
+    }
+
+    log_context.clear()
+
+    @log_context.prefix("deadbeef", separator=":")
+    def _dummy():
+        log_context.update(foo="bar", baz="qux", fourtytwo=42)
+
+    _dummy()
+
+    assert log_context.as_dict() == {
+        "deadbeef:foo": "bar",
+        "deadbeef:baz": "qux",
+        "deadbeef:fourtytwo": 42,
+    }
+
+
+def test_update_with_prefix_exception_raised(context):
+    @log_context.prefix("test")
+    def _dummy():
+        log_context.update(foo="bar")
+        raise Exception("I'm a teapot")
+
+    with pytest.raises(Exception):
+        _dummy()
+
+    # We continue on, context shouldn't be cleared
+    log_context.update(noprefix="please")
+    assert log_context.as_dict() == {
+        "rid": 42,
+        "test__foo": "bar",
+        "noprefix": "please",
+    }
+
+def test_update_with_nested_prefix(context):
+    @log_context.prefix("foo")
+    def _dummy():
+        log_context.update(level=1)
+
+        @log_context.prefix("bar", separator=":")
+        def _dummy2():
+            log_context.update(level=2)
+            return None
+        return _dummy2()
+
+    _dummy()
+    log_context.update(noprefix="please")
+
+    assert log_context.as_dict() == {
+        "rid": 42,
+        "foo__level": 1,
+        "foo__bar:level": 2,
+        "noprefix": "please"
+    }
+
+def test_values_passed_to_with_prefix(context):
+    class NoString(object):
+        def __str__(self):
+            raise Exception("Don't make me a string!")
+
+    with pytest.raises(ValueError):
+        @log_context.prefix(prefix=NoString())
+        def _dummy():
+            log_context.update(failed=True)
+        _dummy()
+
+    with pytest.raises(ValueError):
+        @log_context.prefix(prefix="goodboi", separator=NoString())
+        def _dummy():
+            log_context.update(failed=True)
+        _dummy()
