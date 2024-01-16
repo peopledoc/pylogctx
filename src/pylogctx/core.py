@@ -75,10 +75,8 @@ class Context(threading.local):
 
     def remove_many(self, keys):
         for k in keys:
-            try:
+            if k in self.data:
                 self.data.pop(k)
-            except KeyError:
-                pass
 
     def as_dict(self):
         """
