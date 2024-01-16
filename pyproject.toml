@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools >= 61", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "pylogctx"
+description = "Adding context to log records"
+readme = "README.rst"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Lev Orekhov", email = "lev.orekhov@gmail.com"},
+    {name = "Cross Capabilities"},
+]
+maintainers = [
+    {name = "Cross Capabilities"}
+]
+keywords = []
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "django",
+    "celery",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+lint = [
+    "black",
+    "ruff",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-django",
+    "coverage",
+]
+tox = [
+    "tox",
+]
+
+[project.urls]
+repository = "https://github.com/UKGEPIC/hrsd-pylogctx"
+
+[tool.black]
+line-length = 79
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "pylogctx.__version__"}
+
+[tool.zest-releaser]
+python-file-with-version = "src/pylogctx/__init__.py"
+
+[tool.pytest.ini_options]
+addopts = " --cov-config=pyproject.toml --cov=pylogctx --disable-pytest-warnings"
+
+[tool.coverage.report]
+show_missing = true

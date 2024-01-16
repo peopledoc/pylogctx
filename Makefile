@@ -1,5 +1,5 @@
 VERSION = $(shell python setup.py --version)
-UPSTREAM=git@github.com:peopledoc/pylogctx.git
+UPSTREAM=git@github.com:UKGEPIC/hrsd-pylogctx.git
 
 default:
 
@@ -25,4 +25,4 @@ upload:
 	python3 setup.py sdist bdist_wheel --universal upload -r pypi
 
 test:
-	python setup.py test
+	pytest tests

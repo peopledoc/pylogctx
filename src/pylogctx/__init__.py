@@ -17,3 +17,5 @@ __all__ = [
     'context',
     'log_adapter',
 ]
+
+__version__ = '1.13.dev0'
