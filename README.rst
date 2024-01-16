@@ -83,7 +83,7 @@ There is a few helpers for Celery_ and Django_ projects. See USAGE_ for details!
 Contributors
 ============
 
-Join us to make log rocking better! Read HACKING_ and ask maintainers:
+Join us to make log rocking better! Read HACKING_ and ask authors:
 
 * David STEINBERGER `@dsteinberger <https://github.com/dsteinberger>`_
 * Étienne BERSAC `@bersace <https://github.com/bersace>`_

@@ -1,6 +1,8 @@
 import copy
 
 
+# Original deepupdate released under the MIT license and belongs to Ferry Boender.
+# https://www.electricmonk.nl/log/2017/05/07/merging-two-python-dictionaries-by-deep-updating/
 def deepupdate(target, src):
     """Deep update target dict with src
     For each k,v in src: if k doesn't exist in target, it is deep copied from
