@@ -1,7 +1,8 @@
 from celery import Celery, current_task
 from celery.utils.log import get_task_logger
 from celery import VERSION
-from mock import patch
+
+import pytest
 
 from pylogctx.celery import LoggingTask
 
@@ -46,7 +47,12 @@ def test_old_task():
         logger.info("I log!")
         return context.as_dict()
 
-    result = my_task.apply()
+    with pytest.warns(
+        UserWarning,
+        match="Method `before_call` without args is deprecated"
+    ):
+        result = my_task.apply()
+
     if VERSION.major < 4:
         result.maybe_reraise()
     else:
@@ -70,8 +76,8 @@ def test_failing():
     assert not context.as_dict()
 
 
-@patch.dict('pylogctx.core._adapter_mapping')
-def test_adapter():
+def test_adapter(mocker):
+    mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import context, log_adapter
 
     # To fill save context

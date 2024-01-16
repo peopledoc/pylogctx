@@ -6,7 +6,6 @@ from logging import LogRecord
 import sys
 import threading
 
-from mock import patch
 import pytest
 import six
 
@@ -21,7 +20,7 @@ def record():
     return LogRecord("foo", "INFO", "foo", 10, "waagh :(", (), None)
 
 
-@pytest.yield_fixture
+@pytest.fixture()
 def context():
     log_context.update(rid=42)
     yield log_context
@@ -172,8 +171,8 @@ def test_multi_thread(context):
     assert 'childField'not in fields
 
 
-@patch.dict('pylogctx.core._adapter_mapping')
-def test_adapter_mro(context):
+def test_adapter_mro(mocker, context):
+    mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import log_adapter
 
     class Parent(object):
@@ -198,8 +197,8 @@ def test_adapter_mro(context):
     assert child2.name in data
 
 
-@patch.dict('pylogctx.core._adapter_mapping')
-def test_adapter_manager(context):
+def test_adapter_manager(mocker, context):
+    mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import log_adapter
 
     class Parent(object):
@@ -223,8 +222,8 @@ def test_adapter_manager(context):
         assert child2.name in data
 
 
-@patch.dict('pylogctx.core._adapter_mapping')
-def test_adapter_with_parameters(context):
+def test_adapter_with_parameters(mocker, context):
+    mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import log_adapter
 
     class Parent(object):
@@ -257,8 +256,8 @@ def test_adapter_with_parameters(context):
     assert 'baby2' in data['child']
 
 
-@patch.dict('pylogctx.core._adapter_mapping')
-def test_adapter_missing(context):
+def test_adapter_missing(mocker, context):
+    mocker.patch.dict('pylogctx.core._adapter_mapping')
     with pytest.raises(Exception):
         context.update(object())
 

@@ -32,4 +32,4 @@ class ExtractRequestContextMiddleware(OuterMiddleware):
         try:
             context.update(**extractor(request))
         except Exception:
-            logger.exception()
+            logger.exception("Can't use extractor")
