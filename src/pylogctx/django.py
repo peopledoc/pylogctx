@@ -22,7 +22,6 @@ class OuterMiddleware(MiddlewareMixin):
 
     def process_exception(self, request, exception):
         context.clear()
-        return None
 
 
 class ExtractRequestContextMiddleware(OuterMiddleware):
