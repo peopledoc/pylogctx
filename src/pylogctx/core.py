@@ -198,9 +198,6 @@ class LazyAccessor(object):
     def get(self):
         return getattr(self.instance, self.attrname)
 
-    def __unicode__(self):
-        return unicode(self.get())
-
     def __str__(self):
         return str(self.get())
 

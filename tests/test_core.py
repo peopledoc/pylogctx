@@ -274,10 +274,7 @@ def test_lazy_accessor():
         def __str__(self):
             return self.str_repr
 
-        def __unicode__(self):
-            return 'обѥѩкт'
-
-    class MyObject(object):
+    class MyObject:
         attribute = MyAttribute()
 
     instance = MyObject()
