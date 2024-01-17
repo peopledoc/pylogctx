@@ -32,7 +32,9 @@ class LoggingTask(Task):
         arg_spec = getfullargspec(self.before_call)
         if arg_spec.varargs is None:
             # To keep breaking compat
-            warnings.warn('Method `before_call` without args is deprecated')
+            warnings.warn(
+                'Method `before_call` without args is deprecated', stacklevel=1
+            )
             self.before_call()
         else:
             self.before_call(*args, **kwargs)
@@ -50,7 +52,10 @@ class LoggingTask(Task):
             arg_spec = getfullargspec(self.after_call)
             if arg_spec.varargs is None:
                 # To keep breaking compat
-                warnings.warn('Method `after_call` without args is deprecated')
+                warnings.warn(
+                    'Method `after_call` without args is deprecated',
+                    stacklevel=1,
+                )
                 self.after_call()
             else:
                 self.after_call(*args, **kwargs)
