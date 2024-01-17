@@ -27,14 +27,13 @@ def deepupdate(target, src):
                     deepupdate(target[k], v)
                 elif isinstance(v, set):
                     target[k].update(v)
+            elif isinstance(v, LazyAccessor):
+                # To have a lazy representation from the instance we need
+                # to keep the reference
+                target[k] = v
+            elif isinstance(v, dict):
+                # For manage nested LazyAccessor object
+                target[k] = {}
+                deepupdate(target[k], v)
             else:
-                if isinstance(v, LazyAccessor):
-                    # To have a lazy representation from the instance we need
-                    # to keep the reference
-                    target[k] = v
-                elif isinstance(v, dict):
-                    # For manage nested LazyAccessor object
-                    target[k] = {}
-                    deepupdate(target[k], v)
-                else:
-                    target[k] = copy.deepcopy(v)
+                target[k] = copy.deepcopy(v)
