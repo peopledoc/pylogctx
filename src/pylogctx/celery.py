@@ -2,11 +2,11 @@ from __future__ import absolute_import
 
 import logging
 import warnings
+from inspect import getfullargspec
 
 from celery import current_task
 from celery import Task
 
-from .compat import getargspec
 from .core import context
 
 
@@ -29,7 +29,7 @@ class LoggingTask(Task):
         self.save_context = context.as_dict()
         context.clear()
 
-        arg_spec = getargspec(self.before_call)
+        arg_spec = getfullargspec(self.before_call)
         if arg_spec.varargs is None:
             # To keep breaking compat
             warnings.warn('Method `before_call` without args is deprecated')
@@ -47,7 +47,7 @@ class LoggingTask(Task):
         try:
             return super(LoggingTask, self).__call__(*args, **kwargs)
         finally:
-            arg_spec = getargspec(self.after_call)
+            arg_spec = getfullargspec(self.after_call)
             if arg_spec.varargs is None:
                 # To keep breaking compat
                 warnings.warn('Method `after_call` without args is deprecated')
