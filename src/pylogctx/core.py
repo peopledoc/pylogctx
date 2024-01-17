@@ -137,7 +137,7 @@ context = Context()
 
 
 class AddContextFilter(logging.Filter):
-    def __init__(self, name='', default=None):
+    def __init__(self, name="", default=None):
         super().__init__(name)
         self.default = default or {}
 
@@ -156,10 +156,8 @@ class ExcInfoFilter(logging.Filter):
 class AddContextFormatter(logging.Formatter):
     def format(self, record):
         msg = super().format(record)
-        context_str = ' '.join([
-            f'{k}:{v}' for k, v in context.items()
-        ])
-        return f'{msg} {context_str}'
+        context_str = " ".join([f"{k}:{v}" for k, v in context.items()])
+        return f"{msg} {context_str}"
 
 
 _adapter_mapping = {}
@@ -173,6 +171,7 @@ def log_adapter(class_):
     def decorator(callable_):
         _adapter_mapping[class_] = callable_
         return callable_
+
     return decorator
 
 

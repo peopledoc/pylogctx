@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class LoggingTask(Task):
-
     def before_call(self, *args, **kwargs):
         # Override if you need to add some vars or log something.
         pass
@@ -31,7 +30,7 @@ class LoggingTask(Task):
         if arg_spec.varargs is None:
             # To keep breaking compat
             warnings.warn(
-                'Method `before_call` without args is deprecated', stacklevel=1
+                "Method `before_call` without args is deprecated", stacklevel=1
             )
             self.before_call()
         else:
@@ -42,7 +41,7 @@ class LoggingTask(Task):
         try:
             context.update(task)
         except Exception as e:
-            logger.debug('Failed to push task to log context: %r', e)
+            logger.debug("Failed to push task to log context: %r", e)
 
         try:
             return super().__call__(*args, **kwargs)
@@ -51,7 +50,7 @@ class LoggingTask(Task):
             if arg_spec.varargs is None:
                 # To keep breaking compat
                 warnings.warn(
-                    'Method `after_call` without args is deprecated',
+                    "Method `after_call` without args is deprecated",
                     stacklevel=1,
                 )
                 self.after_call()

@@ -9,13 +9,13 @@ from .core import (
 )
 
 __all__ = [
-    'AdapterNotFound',
-    'AddContextFilter',
-    'AddContextFormatter',
-    'ExcInfoFilter',
-    'LazyAccessor',
-    'context',
-    'log_adapter',
+    "AdapterNotFound",
+    "AddContextFilter",
+    "AddContextFormatter",
+    "ExcInfoFilter",
+    "LazyAccessor",
+    "context",
+    "log_adapter",
 ]
 
-__version__ = '1.13.dev0'
+__version__ = "1.13.dev0"

@@ -17,10 +17,14 @@ def deepupdate(target, src):
     {'name': 'toto', 'hobbies': ['programming', 'chess', 'gaming']}
     """
     from pylogctx.core import LazyAccessor
+
     if src and isinstance(src, dict):
         for k, v in src.items():
-            if k in target and target[k] is not None and isinstance(
-                    v, (list, dict, set)):
+            if (
+                k in target
+                and target[k] is not None
+                and isinstance(v, (list, dict, set))
+            ):
                 if isinstance(v, list):
                     target[k].extend(v)
                 elif isinstance(v, dict):

@@ -14,7 +14,7 @@ def test_task():
 
     @app.task
     def my_task():
-        context.update(taskField='RUNNED')
+        context.update(taskField="RUNNED")
         logger = get_task_logger(current_task.name)
         logger.info("I log!")
         return context.as_dict()
@@ -25,15 +25,15 @@ def test_task():
     else:
         result.maybe_throw()
     fields = result.result
-    assert 'taskField' in fields
+    assert "taskField" in fields
     assert not context.as_dict()
 
 
 class OldLoggingTask(LoggingTask):
-
     def before_call(self):
         from pylogctx import context
-        context.update(taskField='RUNNED')
+
+        context.update(taskField="RUNNED")
 
 
 def test_old_task():
@@ -48,8 +48,7 @@ def test_old_task():
         return context.as_dict()
 
     with pytest.warns(
-        UserWarning,
-        match="Method `before_call` without args is deprecated"
+        UserWarning, match="Method `before_call` without args is deprecated"
     ):
         result = my_task.apply()
 
@@ -58,7 +57,7 @@ def test_old_task():
     else:
         result.maybe_throw()
     fields = result.result
-    assert 'taskField' in fields
+    assert "taskField" in fields
     assert not context.as_dict()
 
 
@@ -69,7 +68,7 @@ def test_failing():
 
     @app.task
     def my_task():
-        raise Exception('fail!')
+        raise Exception("fail!")
 
     result = my_task.apply()
     assert isinstance(result.result, Exception)
@@ -77,22 +76,19 @@ def test_failing():
 
 
 def test_adapter(mocker):
-    mocker.patch.dict('pylogctx.core._adapter_mapping')
+    mocker.patch.dict("pylogctx.core._adapter_mapping")
     from pylogctx import context, log_adapter
 
     # To fill save context
     context.update(toto="tata")
     fields = context.as_dict()
-    assert 'toto' in fields
+    assert "toto" in fields
 
-    app = Celery(task_cls='pylogctx.celery.LoggingTask')
+    app = Celery(task_cls="pylogctx.celery.LoggingTask")
 
     @log_adapter(app.Task)
     def adapter(task):
-        return {
-            'celeryTaskId': task.request.id,
-            'celeryTask': task.name
-        }
+        return {"celeryTaskId": task.request.id, "celeryTask": task.name}
 
     @app.task
     def my_task():
@@ -105,11 +101,11 @@ def test_adapter(mocker):
         result.maybe_throw()
 
     fields = result.result
-    assert 'celeryTask' in fields
-    assert 'celeryTaskId' in fields
+    assert "celeryTask" in fields
+    assert "celeryTaskId" in fields
 
     # Check context is the same before task was started
     fields = context.as_dict()
-    assert 'toto' in fields
+    assert "toto" in fields
 
     context.clear()  # Clear context
