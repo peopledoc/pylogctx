@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import itertools
 import logging
 import threading
@@ -103,7 +101,7 @@ class Context(threading.local):
         return UpdateOneContextManager(self, object_, **adapter_kw)
 
 
-class UpdateContextManager(object):
+class UpdateContextManager:
     def __init__(self, log_context, *objects, **fields):
         self.log_context = log_context
         self.objects = objects
@@ -119,7 +117,7 @@ class UpdateContextManager(object):
         self.log_context._stack.pop(0)
 
 
-class UpdateOneContextManager(object):
+class UpdateOneContextManager:
     def __init__(self, log_context, object_=None, **adapter_kw):
         self.log_context = log_context
         self.object_ = object_
@@ -140,7 +138,7 @@ context = Context()
 
 class AddContextFilter(logging.Filter):
     def __init__(self, name='', default=None):
-        super(AddContextFilter, self).__init__(name)
+        super().__init__(name)
         self.default = default or {}
 
     def filter(self, record):
@@ -157,11 +155,11 @@ class ExcInfoFilter(logging.Filter):
 
 class AddContextFormatter(logging.Formatter):
     def format(self, record):
-        msg = super(AddContextFormatter, self).format(record)
+        msg = super().format(record)
         context_str = ' '.join([
-            '{}:{}'.format(k, v) for k, v in context.items()
+            f'{k}:{v}' for k, v in context.items()
         ])
-        return '{msg} {context}'.format(msg=msg, context=context_str)
+        return f'{msg} {context_str}'
 
 
 _adapter_mapping = {}
@@ -190,7 +188,7 @@ def adapt(object_, **kwargs):
     return adapter(object_, **kwargs)
 
 
-class LazyAccessor(object):
+class LazyAccessor:
     def __init__(self, instance, attrname):
         self.instance = instance
         self.attrname = attrname

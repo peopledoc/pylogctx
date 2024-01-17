@@ -1,13 +1,9 @@
-# coding: utf-8
-from __future__ import unicode_literals
-
 import copy
 from logging import LogRecord
 import sys
 import threading
 
 import pytest
-import six
 
 from pylogctx import (
     AddContextFormatter, AddContextFilter, ExcInfoFilter,
@@ -146,7 +142,7 @@ def test_multi_thread(context):
     # context.
     class Child(threading.Thread):
         def __init__(self, shm):
-            super(Child, self).__init__()
+            super().__init__()
             self.shm = shm
 
         def run(self):
@@ -175,7 +171,7 @@ def test_adapter_mro(mocker, context):
     mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import log_adapter
 
-    class Parent(object):
+    class Parent:
         pass
 
     class Child1(Parent):
@@ -201,7 +197,7 @@ def test_adapter_manager(mocker, context):
     mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import log_adapter
 
-    class Parent(object):
+    class Parent:
         pass
 
     class Child1(Parent):
@@ -226,7 +222,7 @@ def test_adapter_with_parameters(mocker, context):
     mocker.patch.dict('pylogctx.core._adapter_mapping')
     from pylogctx import log_adapter
 
-    class Parent(object):
+    class Parent:
         pass
 
     class Child(Parent):
@@ -265,7 +261,7 @@ def test_adapter_missing(mocker, context):
 def test_lazy_accessor():
     from pylogctx import LazyAccessor
 
-    class MyAttribute(object):
+    class MyAttribute:
         str_repr = 'MyObject'
 
         def __repr__(self):
@@ -282,11 +278,8 @@ def test_lazy_accessor():
 
     assert 'MyObject' == str(value)
     assert '<MyObject>' == repr(value)
-    if six.PY2:
-        assert 'обѥѩкт' == unicode(value)
-    else:
-        MyObject.attribute.str_repr = 'обѥѩкт'
-        assert 'обѥѩкт' == str(value)
+    MyObject.attribute.str_repr = 'обѥѩкт'
+    assert 'обѥѩкт' == str(value)
 
 
 def test_lazy_accessor_deepupdate(context):
@@ -294,7 +287,7 @@ def test_lazy_accessor_deepupdate(context):
 
     from pylogctx import LazyAccessor
 
-    class MyObject(object):
+    class MyObject:
         value = 'foo'
 
         def __repr__(self):
@@ -320,7 +313,7 @@ def test_lazy_accessor_deepupdate_nested(context):
 
     from pylogctx import LazyAccessor
 
-    class MyObject(object):
+    class MyObject:
         value = 'foo'
 
         def __repr__(self):

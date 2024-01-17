@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 import warnings
 from inspect import getfullargspec
@@ -47,7 +45,7 @@ class LoggingTask(Task):
             logger.debug('Failed to push task to log context: %r', e)
 
         try:
-            return super(LoggingTask, self).__call__(*args, **kwargs)
+            return super().__call__(*args, **kwargs)
         finally:
             arg_spec = getfullargspec(self.after_call)
             if arg_spec.varargs is None:
