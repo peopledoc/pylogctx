@@ -5,7 +5,8 @@
 1.13 (unreleased)
 +++++++++++++++++
 
-- Nothing changed yet.
+- Add support for Django >= 3.0
+- Drop support for Django < 3.0
 
 
 1.12 (2018-06-01)
