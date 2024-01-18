@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  - push
+
+jobs:
+  build:
+    name: Python ${{ matrix.python-version }} / ${{ matrix.tox-environment }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - 3.8
+          - 3.9
+        tox-environment:
+          - django32
+          - django42
+        include:
+          - python-version: 3.9
+          - tox-environment: lint
+
+    env:
+      TOXENV: ${{ matrix.tox-environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install tox
+
+      - name: Run tests
+        run: tox
