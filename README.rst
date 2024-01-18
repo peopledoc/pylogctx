@@ -45,7 +45,7 @@ using ``logging``, transparently.
         myticket = get_object_or_404(models.Ticket, pk=ticket_id)
 
         # push objects, they will be adapted to log fields
-        log_context.update(myticket):
+        log_context.update(myticket)
 
         # Log as usual
         logger.info("Working on %r", myticket)
